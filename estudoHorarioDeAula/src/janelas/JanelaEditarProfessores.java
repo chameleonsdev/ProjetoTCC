@@ -1,6 +1,7 @@
 package janelas;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +33,9 @@ public class JanelaEditarProfessores extends Stage {
 
 	VBox hbGeral;
 
-	Button btnCadastrar = new Button("Salvar alterações.");
+	Button btnSalvar = new Button("Salvar alterações.");
+
+	Professor professorSelecionado;
 
 	TableView<Professor> tableProfessor;
 
@@ -79,7 +82,7 @@ public class JanelaEditarProfessores extends Stage {
 		this.clEditDisponibilidade.setResizable(false);
 		this.tableProfessor.getColumns().setAll(colunasdatabela);
 
-		this.hbGeral.getChildren().addAll(this.tableProfessor, this.btnCadastrar);
+		this.hbGeral.getChildren().addAll(this.tableProfessor, this.btnSalvar);
 
 		this.painel.getChildren().add(this.hbGeral);
 
@@ -129,10 +132,36 @@ public class JanelaEditarProfessores extends Stage {
 			}
 		});
 
+		this.tableProfessor.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professor>() {
+			public void changed(ObservableValue<? extends Professor> observable, Professor oldValue, Professor newValue) {
+				atualizarCampos(observable);
+			}
+		});
+
+
+
+		btnSalvar.setOnAction(value -> {
+			this.professorSelecionado.setNome_professor(this.nomeProfessor.getText());
+			this.professorSelecionado.setPontuacao(this.pontuacao.getText());
+		});
+
 		Scene cena = new Scene(painel);
 		this.setScene(cena);
 		this.show();
 
+	}
+
+	private void atualizarCampos(ObservableValue<? extends Professor> c) {
+
+		try {
+			this.professorSelecionado = c.getValue();
+			this.nome.setText(c.getValue().nome().get());
+			this.email.setText(c.getValue().email().get());
+		} catch (NullPointerException e) {
+			this.contatoSelecionado = null;
+			this.nome.setText("");
+			this.email.setText("");
+		}
 	}
 
 }
