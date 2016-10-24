@@ -12,31 +12,26 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
-public class CelulaComCampoDeTexto implements Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
+public class CelulaComCampoDeTextoDoubleMax5 implements Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
 
 	String retorno;
 
 	@Override
 	public TableCell<Professor, String> call(TableColumn<Professor, String> param) {
-		CelulaDeTexto teste = new CelulaDeTexto();
-		retorno = teste.getProfessorEditado();
-		return teste;
 
-	}
+		return new CelulaDeTextoDoubleMax5();
 
-	public String getEditado(){
-		return retorno;
 	}
 
 }
 
-class CelulaDeTexto extends TableCell<Professor, String> {
+class CelulaDeTextoDoubleMax5 extends TableCell<Professor, String> {
 
 	private TextField editorDeTexto;
 
 	private String editado;
 
-	public CelulaDeTexto() {
+	public CelulaDeTextoDoubleMax5() {
 
 
 		this.criarCampoDeTexto();
@@ -45,6 +40,17 @@ class CelulaDeTexto extends TableCell<Professor, String> {
 		this.setAlignment(Pos.CENTER);
 		//professorRecebido.setNome_professor(editorDeTexto.getText());
 		this.editorDeTexto.selectAll();
+		this.editorDeTexto.setOnKeyTyped(arg0 -> {
+			char teste = arg0.getCharacter().charAt(0);
+			if(Character.isLetter(teste) && !Character.isDigit(teste))
+			{
+				arg0.consume();
+			}else {
+				if(this.editorDeTexto.getLength() >= 5 && this.editorDeTexto.getSelectedText().length() < 1) {
+					arg0.consume();
+				}
+			}
+		});
 	}
 
 	@Override

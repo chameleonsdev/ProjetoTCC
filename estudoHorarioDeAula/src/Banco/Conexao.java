@@ -57,7 +57,7 @@ public class Conexao {
 			return sql.getResultList();
 		}
 
-		public void update(Object objeto) {
+		public static void update(Object objeto) {
 
 			EntityManager gerenciador = Conexao.gerarGerenciador();
 			gerenciador.getTransaction().begin();
@@ -67,7 +67,7 @@ public class Conexao {
 
 		}
 
-		public void delete(Object objeto) {
+		public static void delete(Object objeto) {
 
 			EntityManager gerenciador = Conexao.gerarGerenciador();
 			gerenciador.getTransaction().begin();

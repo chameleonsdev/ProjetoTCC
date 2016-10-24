@@ -25,6 +25,8 @@ import javax.persistence.Query;
 import Banco.Conexao;
 import controles.CelulaBotao;
 import controles.CelulaComCampoDeTexto;
+import controles.CelulaComCampoDeTextoDouble;
+import controles.CelulaComCampoDeTextoDoubleMax5;
 import entidades.Professor;
 
 public class JanelaEditarProfessores extends Stage {
@@ -45,6 +47,8 @@ public class JanelaEditarProfessores extends Stage {
 	TableColumn<Professor, String> clPontuacao;
 	TableColumn<Professor, String> clEditCursosMaterias;
 	TableColumn<Professor, String> clEditDisponibilidade;
+
+	ObservableList<Professor> professoresEditados;
 
 	EntityManager gerenciador = new Conexao().gerarGerenciador();
 
@@ -67,7 +71,7 @@ public class JanelaEditarProfessores extends Stage {
 								clEditDisponibilidade = new TableColumn<Professor, String>("Disponibilidades")
 		};
 
-
+		this.professoresEditados = FXCollections.observableArrayList();
 
 
 		this.clNome.setMinWidth(200);
@@ -97,8 +101,9 @@ public class JanelaEditarProfessores extends Stage {
 		this.clNome.setCellValueFactory(new PropertyValueFactory<Professor, String>("nome_professor"));
 		this.clNome.setCellFactory(new CelulaComCampoDeTexto());
 
+
 		this.clNumProfessor.setCellValueFactory(new PropertyValueFactory<Professor, String>("num_professor"));
-		this.clNumProfessor.setCellFactory(new CelulaComCampoDeTexto());
+		this.clNumProfessor.setCellFactory(new CelulaComCampoDeTextoDoubleMax5());
 
 		this.clPontuacao.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Professor,String>, ObservableValue<String>>() {
 
@@ -109,7 +114,7 @@ public class JanelaEditarProfessores extends Stage {
 				return new SimpleStringProperty(String.valueOf(arg0.getValue().getPontuacao()));
 			}
 		});
-		this.clPontuacao.setCellFactory(new CelulaComCampoDeTexto());
+		this.clPontuacao.setCellFactory(new CelulaComCampoDeTextoDouble());
 
 		this.tableProfessor.getItems().setAll(listDeProfessores);
 		this.clEditCursosMaterias.setCellFactory(new CelulaBotao());
@@ -132,6 +137,7 @@ public class JanelaEditarProfessores extends Stage {
 			}
 		});
 
+
 		this.tableProfessor.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Professor>() {
 			public void changed(ObservableValue<? extends Professor> observable, Professor oldValue, Professor newValue) {
 				atualizarCampos(observable);
@@ -140,9 +146,40 @@ public class JanelaEditarProfessores extends Stage {
 
 
 
+		this.clNome.setOnEditCommit(value -> {
+			professorSelecionado.setNome_professor(value.getNewValue());
+			if(!professoresEditados.contains(professorSelecionado)){
+				professoresEditados.add(professorSelecionado);
+			}else{
+				professoresEditados.remove(professorSelecionado);
+				professoresEditados.add(professorSelecionado);
+			}
+		});
+		this.clNumProfessor.setOnEditCommit(value -> {
+			professorSelecionado.setNum_professor(value.getNewValue());
+			if(!professoresEditados.contains(professorSelecionado)){
+				professoresEditados.add(professorSelecionado);
+			}else{
+				professoresEditados.remove(professorSelecionado);
+				professoresEditados.add(professorSelecionado);
+			}
+		});
+		this.clPontuacao.setOnEditCommit(value -> {
+			professorSelecionado.setPontuacao(Double.parseDouble(value.getNewValue()));
+			if(!professoresEditados.contains(professorSelecionado)){
+				professoresEditados.add(professorSelecionado);
+			}else{
+				professoresEditados.remove(professorSelecionado);
+				professoresEditados.add(professorSelecionado);
+			}
+		});
+
+
+
 		btnSalvar.setOnAction(value -> {
-			this.professorSelecionado.setNome_professor(this.nomeProfessor.getText());
-			this.professorSelecionado.setPontuacao(this.pontuacao.getText());
+			for(Professor p : professoresEditados){
+				Conexao.update(p);
+			}
 		});
 
 		Scene cena = new Scene(painel);
@@ -151,16 +188,13 @@ public class JanelaEditarProfessores extends Stage {
 
 	}
 
-	private void atualizarCampos(ObservableValue<? extends Professor> c) {
+	private void atualizarCampos(ObservableValue<? extends Professor> p) {
 
 		try {
-			this.professorSelecionado = c.getValue();
-			this.nome.setText(c.getValue().nome().get());
-			this.email.setText(c.getValue().email().get());
+			this.professorSelecionado = p.getValue();
 		} catch (NullPointerException e) {
-			this.contatoSelecionado = null;
-			this.nome.setText("");
-			this.email.setText("");
+			this.professorSelecionado = null;
+
 		}
 	}
 

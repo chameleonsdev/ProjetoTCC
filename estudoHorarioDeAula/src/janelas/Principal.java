@@ -37,7 +37,7 @@ public class Principal extends Application{
 		//----------------> Coisa de Testes :v pita EU TOU CERTO; <----------------//
 		System.out.println("Eu sou eu - Pau no seu cu!");
 		//----------------> MOSTRA A JANELA PRINCIPAL (DEFAULT = JanelaLogin); <----------------//
-		JanelaCadastroProfessores janela = new JanelaCadastroProfessores();
+		JanelaEditarCurso janela = new JanelaEditarCurso();
 	}
 
 }

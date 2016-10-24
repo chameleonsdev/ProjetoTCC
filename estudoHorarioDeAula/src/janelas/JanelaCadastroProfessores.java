@@ -114,16 +114,6 @@ public class JanelaCadastroProfessores extends Stage{
 			if(Character.isLetter(teste) && !Character.isDigit(teste))
 			{
 				arg0.consume();
-			}else if(Character.isDigit(teste)){
-				if(Character.getNumericValue(teste) > 2 && txtPontuacao.getText().length() == 0) {
-					arg0.consume();
-					txtPontuacao.setText("2");
-					txtPontuacao.positionCaret(+1);
-				}else if(txtPontuacao.getText().length() == 1 && Integer.parseInt(txtPontuacao.getText().substring(0, 1)) == 2 && Character.getNumericValue(teste) > 3){
-					arg0.consume();
-					txtPontuacao.setText("00");
-					txtPontuacao.positionCaret(+2);
-				}
 			}
 		});
 
@@ -133,15 +123,9 @@ public class JanelaCadastroProfessores extends Stage{
 			if(Character.isLetter(teste) && !Character.isDigit(teste))
 			{
 				arg0.consume();
-			}else if(Character.isDigit(teste)){
-				if(Character.getNumericValue(teste) > 2 && txtNumProf.getText().length() == 0) {
+			}else {
+				if(this.txtNumProf.getLength() > 5) {
 					arg0.consume();
-					txtNumProf.setText("2");
-					txtNumProf.positionCaret(+1);
-				}else if(txtNumProf.getText().length() == 1 && Integer.parseInt(txtNumProf.getText().substring(0, 1)) == 2 && Character.getNumericValue(teste) > 3){
-					arg0.consume();
-					txtNumProf.setText("00");
-					txtNumProf.positionCaret(+2);
 				}
 			}
 		});

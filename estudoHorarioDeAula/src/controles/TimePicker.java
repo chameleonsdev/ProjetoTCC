@@ -25,7 +25,7 @@ public class TimePicker extends HBox{
 	private HBox hbbtnmais = new HBox(3);
 	private HBox hbbtnmenos = new HBox(3);
 	private VBox vbox = new VBox(2);
-	
+
 	public TimePicker() {
 		hbos.getChildren().addAll(HORAS,label,MINUTOS);
 		hbbtnmais.getChildren().addAll(btnmaish,btnmaism);
@@ -35,26 +35,26 @@ public class TimePicker extends HBox{
 		hbos.setAlignment(Pos.CENTER);
 		hbbtnmais.setAlignment(Pos.CENTER);
 		hbbtnmenos.setAlignment(Pos.CENTER);
-		
+
 		HORAS.setMaxWidth(32);
 		MINUTOS.setMaxWidth(32);
 		HORAS.setMinWidth(32);
 		MINUTOS.setMinWidth(32);
-		
+
 		btnmaish.setMaxWidth(32);
 		btnmenosh.setMaxWidth(32);
 		btnmaish.setMinWidth(32);
 		btnmenosh.setMinWidth(32);
-		
+
 		btnmaism.setMaxWidth(32);
 		btnmenosm.setMaxWidth(32);
 		btnmaism.setMinWidth(32);
 		btnmenosm.setMinWidth(32);
-		
-		
+
+
 		HORAS.setText("00");
 		MINUTOS.setText("00");
-		
+
 		HORAS.setOnKeyTyped(arg0 -> {
 			char teste = arg0.getCharacter().charAt(0);
 			if(Character.isLetter(teste) && !Character.isDigit(teste) || HORAS.getText().length() == 2 && HORAS.selectionProperty().get().getLength() == 0)
@@ -72,7 +72,7 @@ public class TimePicker extends HBox{
 				}
 			}
 		});
-		
+
 		HORAS.focusedProperty().addListener(new ChangeListener<Boolean>()
 				{
 				    @Override
@@ -87,13 +87,13 @@ public class TimePicker extends HBox{
 				        	if(getHoras() > 23){
 				        		HORAS.setText("00");
 				        	}
-				        	
+
 				        }
 				    }
 				});
-		
-		
-		
+
+
+
 		MINUTOS.setOnKeyTyped(arg0 -> {
 			char teste = arg0.getCharacter().charAt(0);
 			if(Character.isLetter(teste) && !Character.isDigit(teste) || MINUTOS.getText().length() == 2 && MINUTOS.selectionProperty().get().getLength() == 0)
@@ -131,54 +131,59 @@ public class TimePicker extends HBox{
 				        }
 				    }
 				});
-		
+
 		btnmaish.setOnAction(evento -> {
-			
+
 			somaremhora();
-			
+
 		});
-		
+
 		btnmenosh.setOnAction(evento -> {
-			
+
 			subtrairemhora();
-			
+
 		});
-		
+
 		btnmaism.setOnAction(evento -> {
-			
+
 			somaremminuto();
-			
+
 		});
-		
+
 		btnmenosm.setOnAction(evento -> {
-			
+
 			subtrairemminuto();
-			
+
 		});
-		
+
 		this.setAlignment(Pos.CENTER);
 		this.getChildren().add(vbox);
 		this.getStylesheets().add("CSS/TimePicker.css");
 	}
-	
+
 	public LocalTime getTime() {
 		LocalTime time;
 		time = LocalTime.of(Integer.parseInt(HORAS.getText()), Integer.parseInt(MINUTOS.getText()));
 		return time;
 	}
-	
+
+	public void setTime(LocalTime hora) {
+		HORAS.setText(String.valueOf(hora.getHour()));
+		MINUTOS.setText(String.valueOf(hora.getMinute()));
+	}
+
 	public int getHoras() {
 		int hora;
 		hora = Integer.parseInt(HORAS.getText());
 		return hora;
 	}
-	
+
 	public int getMinutos() {
 		int minuto;
 		minuto = Integer.parseInt(MINUTOS.getText());
 		return minuto;
 	}
-	
+
 	private void somaremhora(){
 		int hora = Integer.parseInt(HORAS.getText());
 		if(hora == 23)
@@ -194,7 +199,7 @@ public class TimePicker extends HBox{
 			HORAS.setText("0"+hora);
 		}
 	}
-	
+
 	private void subtrairemhora(){
 		int hora = Integer.parseInt(HORAS.getText());
 		if(hora == 00)
@@ -210,7 +215,7 @@ public class TimePicker extends HBox{
 			HORAS.setText("0"+hora);
 		}
 	}
-	
+
 	private void somaremminuto(){
 		int minutos = Integer.parseInt(MINUTOS.getText());
 		if(minutos == 59)
@@ -243,6 +248,6 @@ public class TimePicker extends HBox{
 			MINUTOS.setText("0"+minutos);
 		}
 	}
-	
-	
+
+
 }

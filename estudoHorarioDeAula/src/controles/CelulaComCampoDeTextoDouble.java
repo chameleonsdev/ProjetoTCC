@@ -12,13 +12,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
-public class CelulaComCampoDeTexto implements Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
+public class CelulaComCampoDeTextoDouble implements Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
 
 	String retorno;
 
 	@Override
 	public TableCell<Professor, String> call(TableColumn<Professor, String> param) {
-		CelulaDeTexto teste = new CelulaDeTexto();
+		CelulaDeTextoDouble teste = new CelulaDeTextoDouble();
 		retorno = teste.getProfessorEditado();
 		return teste;
 
@@ -30,13 +30,13 @@ public class CelulaComCampoDeTexto implements Callback<TableColumn<Professor, St
 
 }
 
-class CelulaDeTexto extends TableCell<Professor, String> {
+class CelulaDeTextoDouble extends TableCell<Professor, String> {
 
 	private TextField editorDeTexto;
 
 	private String editado;
 
-	public CelulaDeTexto() {
+	public CelulaDeTextoDouble() {
 
 
 		this.criarCampoDeTexto();
@@ -45,6 +45,13 @@ class CelulaDeTexto extends TableCell<Professor, String> {
 		this.setAlignment(Pos.CENTER);
 		//professorRecebido.setNome_professor(editorDeTexto.getText());
 		this.editorDeTexto.selectAll();
+		this.editorDeTexto.setOnKeyTyped(arg0 -> {
+			char teste = arg0.getCharacter().charAt(0);
+			if(Character.isLetter(teste) && !Character.isDigit(teste))
+			{
+				arg0.consume();
+			}
+		});
 	}
 
 	@Override
