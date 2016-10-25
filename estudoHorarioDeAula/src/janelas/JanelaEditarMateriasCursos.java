@@ -43,6 +43,8 @@ public class JanelaEditarMateriasCursos extends Stage {
 	// ----------------> DEFININDO PROPRIEDADES; <----------------//
 
 	private Label lblNomeProfDoubleDot;
+	private Label lblCurso;
+	private Label lblMateria;
 
 	private TextField txtNomeProfDoubleDot;
 
@@ -85,6 +87,8 @@ public class JanelaEditarMateriasCursos extends Stage {
 		// ----------------> INSTANCIANDO AS PARADAS; <----------------//
 
 		this.lblNomeProfDoubleDot = new Label("Professor: ");
+		this.lblCurso = new Label("Curso:");
+		this.lblMateria = new Label("Materia:");
 
 		this.txtNomeProfDoubleDot = new TextField();
 
@@ -127,8 +131,8 @@ public class JanelaEditarMateriasCursos extends Stage {
 
 		// ----------------> Adicionando componentes nas V/Hboxes;
 		// <----------------//
-		this.vBoxProfessor.getChildren().addAll(this.lblNomeProfDoubleDot, this.txtNomeProfDoubleDot,
-				this.cboCursoProfessor, this.cboMateriaCurso, this.btnAddMateriaCurso, this.btnRmMateriaCurso,
+		this.vBoxProfessor.getChildren().addAll(this.lblNomeProfDoubleDot, this.txtNomeProfDoubleDot, this.lblCurso,
+				this.cboCursoProfessor,this.lblMateria , this.cboMateriaCurso, this.btnAddMateriaCurso, this.btnRmMateriaCurso,
 				this.btnCadastrarProfessor);
 		this.hBoxProfessorTabela.getChildren().addAll(this.vBoxProfessor, this.tree);
 
@@ -145,8 +149,8 @@ public class JanelaEditarMateriasCursos extends Stage {
 
 		// ----------------> Define alinhamento das V/Hboxes;
 		// <----------------//
-		this.vBoxProfessor.setAlignment(Pos.BASELINE_LEFT);
-		this.hBoxProfessorTabela.setAlignment(Pos.BASELINE_CENTER);
+		this.vBoxProfessor.setAlignment(Pos.CENTER);
+		this.hBoxProfessorTabela.setAlignment(Pos.CENTER);
 
 		// --------------------------------------------------------------------------------------//
 
@@ -202,9 +206,10 @@ public class JanelaEditarMateriasCursos extends Stage {
 			// ----------------> Varre a treeview; <----------------//
 			for (int x = 0; x < rootItem.getChildren().size(); x++) {
 				// ----------------> Ve se o curso a ser adicionado ja existe;
-				// <----------------//
-				if (rootItem.getChildren().get(x).getValue() == cboCursoProfessor.getSelectionModel().getSelectedItem()
-						.getNome_curso()) {
+				// <----------------//`
+				System.out.println(rootItem.getChildren().get(x).getValue() + " = " + cboCursoProfessor.getSelectionModel().getSelectedItem()
+						.getNome_curso());
+				if (rootItem.getChildren().get(x).getValue().equals(cboCursoProfessor.getSelectionModel().getSelectedItem().getNome_curso())) {
 					existeCurso = true;
 				}
 			}
@@ -239,8 +244,8 @@ public class JanelaEditarMateriasCursos extends Stage {
 				for (int x = 0; x < itemcurso.getChildren().size(); x++) {
 					// ----------------> Verifica se a materia ja existe;
 					// <----------------//
-					if (itemcurso.getChildren().get(x).getValue() == cboMateriaCurso.getSelectionModel()
-							.getSelectedItem().getNome_materia()) {
+					if (itemcurso.getChildren().get(x).getValue().equals(cboMateriaCurso.getSelectionModel()
+							.getSelectedItem().getNome_materia())) {
 						existeMateria = true;
 					}
 				}
@@ -303,52 +308,47 @@ public class JanelaEditarMateriasCursos extends Stage {
 		// ----------------> Variaveis auxiliares para ver se existe
 		// curso/materia; <----------------//
 
-		for (Materia m : p.getMaterias()) {
+		for (int cont = 0; cont < rootItem.getChildren().size(); cont++) {
 
 			boolean existeMateria = false;
 			int curso = 0;
 			int contcurso = 0;
 
-			for (Curso cur : m.getCursos()) {
-				for (int cont = 0; cont < rootItem.getChildren().size(); cont++) {
+				System.out.println(rootItem.getChildren().size());
+				System.out.println(p.getMaterias().size());
+				for (Materia m : p.getMaterias()) {
+					for (Curso cur : m.getCursos()) {
 					if (rootItem.getChildren().get(cont).getValue().equals(cur.getNome_curso())) {
-						if (rootItem.getChildren().get(cont).getChildren().size() >= 1) {
-							for (int x = 0; x < rootItem.getChildren().get(cont).getChildren().size(); x++) {
-								if (!rootItem.getChildren().get(cont).getChildren().get(x).getValue()
-										.equals(m.getNome_materia())) {
-									listaDeMateriasProfessor.add(m);
-									item = new TreeItem<String>(m.getNome_materia());
-									rootItem.getChildren().get(x).getChildren().add(item);
-								}
-							}
-						} else {
+
 							listaDeMateriasProfessor.add(m);
 							item = new TreeItem<String>(m.getNome_materia());
 							rootItem.getChildren().get(cont).getChildren().add(item);
 						}
 					}
 				}
-			}
 		}
 
 		this.btnRmMateriaCurso.setOnAction(evento -> {
-
-			this.rootItem.getChildren().remove(tree.getSelectionModel().getSelectedItem());
-			this.itemcurso.getChildren().remove(tree.getSelectionModel().getSelectedItem());
-
+			for(int i = 0; i < rootItem.getChildren().size(); i++){
+				if(rootItem.getChildren().contains(tree.getSelectionModel().getSelectedItem())) {
+					rootItem.getChildren().remove(tree.getSelectionModel().getSelectedItem());
+				}else{
+					for(int x = 0; x < rootItem.getChildren().get(i).getChildren().size();x++){
+						if(rootItem.getChildren().get(i).getChildren().contains(tree.getSelectionModel().getSelectedItem()) && rootItem.getChildren().get(i).getChildren().get(x).getValue() == tree.getSelectionModel().getSelectedItem().getValue()){
+							rootItem.getChildren().get(i).getChildren().remove(tree.getSelectionModel().getSelectedItem());
+						}
+					}
+				}
+			}
 		});
 
 		// ----------------> BOTÃO CADASTRAR PROFESSOR; <----------------//
 		this.btnCadastrarProfessor.setOnAction(evento -> {
 
-			// ----------------> Cria o Gerenciador de entidades;
-			// <----------------//
+			p.setCursos(listaDeCursosProfessor);
+			p.setMaterias(listaDeMateriasProfessor);
 
-			// ----------------> Cria novo objeto professor; <----------------//
-
-			// ----------------> Da INSERT na tabela professor;
-			// <----------------//
-			Conexao.insert(p);
+			Conexao.update(p);
 
 		});
 

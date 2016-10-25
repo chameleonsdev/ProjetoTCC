@@ -2,13 +2,12 @@ package controles;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-import entidades.Horario;
 import entidades.Professor;
+import janelas.JanelaEditarMateriasCursos;
+import janelas.JanelaEditarProfessores;
 
 public class CelulaBotao implements
 		Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
@@ -17,20 +16,32 @@ public class CelulaBotao implements
 	public TableCell<Professor, String> call(TableColumn<Professor, String> arg0) {
 		return new celulaButton();
 	}
-	
+
 	class celulaButton extends TableCell<Professor, String> {
-		
+
 		private Button btnCelula;
-		 
-		
+
+
 		public celulaButton() {
 
 			this.criarBotao();
 			this.setText(this.recuperarTexto());
 			this.setGraphic(null);
 			this.setAlignment(Pos.CENTER);
-			
+
+			btnCelula.setOnMouseClicked(value -> {
+				if(this.getTableColumn().getText().equals("Cursos e Materias")){
+					JanelaEditarMateriasCursos janelaEProf = null;
+					if(janelaEProf == null){
+						janelaEProf = new JanelaEditarMateriasCursos((Professor) this.getTableRow().getItem());
+					}
+					janelaEProf.show();
+				}
+			});
+
 		}
+
+
 
 		@Override
 		protected void updateItem(String item, boolean empty) {
@@ -55,7 +66,7 @@ public class CelulaBotao implements
 			this.btnCelula.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
 			//this.cboxAWTEhMelhor.setOnMouseClicked(this);
 		}
-		
+
 		}
 
 }

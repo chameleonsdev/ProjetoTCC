@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -173,6 +174,7 @@ public class JanelaEditarProfessores extends Stage {
 				professoresEditados.add(professorSelecionado);
 			}
 		});
+		//this.clEditCursosMaterias.
 
 
 
