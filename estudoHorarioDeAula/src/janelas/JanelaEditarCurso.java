@@ -12,16 +12,25 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import controles.TimePicker;
 import entidades.Curso;
@@ -43,12 +52,18 @@ public class JanelaEditarCurso extends Stage {
 	private Label lblNomeCurso;
 	private Label lblTipoCurso;
 	private Label lblNewNomeCurso;
+	private Label lblFiltrosPesq;
+	private Label lblNewTipoCurso;
+	private Label lblCargaHoraria;
 
 	private TextField txtMateria;
 	private TextField txtHorario;
 	private TextField txtQtdAulas;
 	private TextField txtNomeCurso;
 	private TextField txtNewNomeCurso;
+	private TextField txtCargaHoraria;
+
+	private CheckBox ckbIsDivisible;
 
 	private TimePicker horaInicio;
 	private TimePicker horaTermino;
@@ -61,6 +76,7 @@ public class JanelaEditarCurso extends Stage {
 	private Button btnAdcHorario;
 
 	private VBox VBGeral;
+	private VBox VBCargaHoraria;
 	private VBox VBNomeCurso;
 	private VBox VBTipoCurso;
 	private VBox VBEscolhaMaterias;
@@ -69,6 +85,7 @@ public class JanelaEditarCurso extends Stage {
 	private Curso cursoSelecionado;
 
 	private HBox HBBotoes;
+	private HBox HBCheckbox;
 	private HBox HBAlinhar;
 
 	private ObservableList<String> TiposCurso;
@@ -81,7 +98,8 @@ public class JanelaEditarCurso extends Stage {
 
 	private AnchorPane painel;
 
-	private ComboBox cmbTiposCurso;
+	private ComboBox<String> cmbTiposCurso;
+	private ComboBox<String> cmbNewTipoCurso;
 
 	private EntityManager gerenciador;
 
@@ -101,12 +119,19 @@ public class JanelaEditarCurso extends Stage {
 		this.lblHorario = new Label("Horario do Curso");
 		this.lblQtdAulas = new Label("Quantidade de Aulas:");
 		this.lblNewNomeCurso = new Label("Novo Nome:");
+		this.lblFiltrosPesq = new Label("Filtros de Pesquisa");
+		this.lblNewTipoCurso = new Label("Novo Tipo:");
+		this.lblCargaHoraria = new Label("Carga Horaria da Materia:");
+
 
 		this.txtMateria = new TextField();
 		this.txtHorario = new TextField();
 		this.txtQtdAulas = new TextField();
 		this.txtNomeCurso = new TextField();
 		this.txtNewNomeCurso = new TextField();
+		this.txtCargaHoraria = new TextField();
+
+		this.ckbIsDivisible = new CheckBox("A materia é divisivel?");
 
 		this.horaInicio = new TimePicker();
 		this.horaTermino = new TimePicker();
@@ -119,12 +144,14 @@ public class JanelaEditarCurso extends Stage {
 		this.btnAdcHorario = new Button("Adicionar Horario");
 
 		this.VBGeral = new VBox(5);
+		this.VBCargaHoraria = new VBox(5);
 		this.VBNomeCurso = new VBox(5);
 		this.VBTipoCurso = new VBox(5);
 		this.VBEscolhaMaterias = new VBox(5);
 		this.VBEscolhaHorarios = new VBox(5);
 
 		this.HBBotoes = new HBox(5);
+		this.HBCheckbox = new HBox(5);
 		this.HBAlinhar = new HBox(5);
 
 		this.ListHorarios = FXCollections.observableArrayList();
@@ -138,7 +165,8 @@ public class JanelaEditarCurso extends Stage {
 
 		this.painel = new AnchorPane();
 
-		this.cmbTiposCurso = new ComboBox();
+		this.cmbTiposCurso = new ComboBox<String>();
+		this.cmbNewTipoCurso = new ComboBox<String>();
 
 		this.gerenciador = Conexao.gerarGerenciador();
 
@@ -149,6 +177,7 @@ public class JanelaEditarCurso extends Stage {
 		// ----------------> Preenchendo as comboxes e listas;
 		// <----------------//
 		this.cmbTiposCurso.setItems(TiposCurso);
+		this.cmbNewTipoCurso.setItems(TiposCurso);
 		this.listvMaterias.setItems(ListMaterias);
 		//this.listvHorarios.setItems(ListHorarios);
 
@@ -157,17 +186,23 @@ public class JanelaEditarCurso extends Stage {
 		this.VBGeral.getChildren().addAll(this.VBNomeCurso, this.VBTipoCurso, this.listvCursos);
 		this.HBBotoes.getChildren().addAll(this.btnAdcMateria,
 				this.btnRmvMateria);
-		this.VBNomeCurso.getChildren().addAll(this.lblNomeCurso,
+		this.VBCargaHoraria.getChildren().addAll(this.lblCargaHoraria, this.txtCargaHoraria);
+		this.HBCheckbox.getChildren().addAll(this.VBCargaHoraria, this.ckbIsDivisible);
+		this.VBNomeCurso.getChildren().addAll(this.lblFiltrosPesq ,this.lblNomeCurso,
 				this.txtNomeCurso);
 		this.VBTipoCurso.getChildren().addAll(this.lblTipoCurso,
 				this.cmbTiposCurso);
-		this.VBEscolhaMaterias.getChildren().addAll(this.lblNewNomeCurso, this.txtNewNomeCurso, this.lblMateria,
-				this.txtMateria, this.HBBotoes, this.listvMaterias);
+		this.VBEscolhaMaterias.getChildren().addAll(this.lblNewNomeCurso, this.txtNewNomeCurso, this.lblNewTipoCurso, this.cmbNewTipoCurso, this.lblMateria,
+				this.txtMateria, this.HBCheckbox, this.HBBotoes, this.listvMaterias);
 		this.VBEscolhaHorarios.getChildren().addAll(this.lblHorario,
 				this.lblInicio, this.horaInicio, this.lblTermino,
 				this.horaTermino, this.lblIntervalo, this.horaDuracaoIntervalo,
 				this.lblQtdAulas, this.txtQtdAulas, this.btnEdtCurso,
 				this.btnVoltar);
+
+		this.VBGeral.setPadding(new Insets(5,5,5,5));
+		this.VBGeral.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
 
 		// ----------------> Adicionando tudo na HBox Principal;
 		// <----------------//
@@ -185,9 +220,11 @@ public class JanelaEditarCurso extends Stage {
 		this.txtNomeCurso.setOnKeyPressed(evento -> {
 			Query sql;
 			if (cmbTiposCurso.getSelectionModel().getSelectedIndex() > -1){
-				sql = gerenciador.createQuery("from Curso Where tipo_curso = '"+ cmbTiposCurso.getSelectionModel().getSelectedItem() +"' and nome_curso = '%"+ txtNomeCurso.getText() +"%'");
+				ListCursos.clear();
+				sql = gerenciador.createQuery("from Curso Where tipo_curso = '"+ cmbTiposCurso.getSelectionModel().getSelectedItem() +"' and nome_curso like '%"+ txtNomeCurso.getText() +"%'");
 			}else{
-				sql = gerenciador.createQuery("from Curso Where nome_curso = '%"+ txtNomeCurso.getText() +"%'");
+				ListCursos.clear();
+				sql = gerenciador.createQuery("from Curso Where nome_curso like '%"+ txtNomeCurso.getText() +"%'");
 			}
 			List<Curso> retornos = sql.getResultList();
 			if(retornos.size() > 0){
@@ -221,6 +258,7 @@ public class JanelaEditarCurso extends Stage {
 				horaTermino.setTime(listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()-1).getHora_disp().plusHours(duracaoAula.getHour()).plusMinutes(duracaoAula.getMinute()));
 				horaDuracaoIntervalo.setTime(duracaoIntervalo);
 				txtQtdAulas.setText(String.valueOf(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()));
+				this.cmbNewTipoCurso.getSelectionModel().select(listvCursos.getSelectionModel().getSelectedItem().getTipo_curso());
 			}
 		});
 
