@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import javax.persistence.EntityManager;
 
+import controles.MessageBox;
 import controles.TimePicker;
 import Banco.Conexao;
 import entidades.Curso;
@@ -30,7 +31,7 @@ import javafx.stage.Stage;
 
 
 @SuppressWarnings("all")//----------------> SAI WARNINGS; <----------------//
-public class JanelaCadastroHorarios extends Stage{
+public class JanelaCadastroCursos extends Stage{
 
 	//--------------------------------------------------------------------------------------//
 
@@ -88,7 +89,7 @@ public class JanelaCadastroHorarios extends Stage{
 
 	//--------------------------------------------------------------------------------------//
 
-	public JanelaCadastroHorarios() {
+	public JanelaCadastroCursos() {
 
 		//--------------------------------------------------------------------------------------//
 
@@ -183,8 +184,7 @@ public class JanelaCadastroHorarios extends Stage{
 				m.setCarga_materia(Double.parseDouble(this.txtCargaHoraria.getText()));
 				m.setDivisivel_materia(this.ckbIsDivisible.isSelected());
 				this.ListMaterias.add(m);
-				this.txtMateria.clear();
-				this.txtMateria.requestFocus();
+				limparCamposMateria();
 			}
 		});
 
@@ -200,56 +200,72 @@ public class JanelaCadastroHorarios extends Stage{
 		//----------------> BOTï¿½O ADD CURSO; <----------------//
 		this.btnAdcCurso.setOnAction(evento -> {
 
-		    //----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
-		    LocalTime horainicio;
-		    LocalTime horafim;
-		    EntityManager gerenciador = Conexao.gerarGerenciador();
+			if(this.txtNomeCurso.getText().isEmpty()) {
 
-		    //----------------> Define horas para o inicio e fim do curso; <----------------//
-		    horainicio = this.horaInicio.getTime();
-		    horafim = this.horaTermino.getTime();
-		    LocalTime horaduracao = horafim.minusHours(horainicio.getHour()).minusHours(this.horaDuracaoIntervalo.getHoras()).minusMinutes(horainicio.getHour()).minusMinutes(this.horaDuracaoIntervalo.getMinutos());
-	    	float dividehora = (((horaduracao.getHour()*60)+horaduracao.getMinute())/Integer.parseInt(this.txtQtdAulas.getText()));
-	    	String horadividida = String.valueOf(dividehora / 60);
-		    //----------------> Contador para definir o horario de cada aula do curso; <----------------//
-		    for(int x = 0;x < Integer.parseInt(this.txtQtdAulas.getText());x++)
-		    {
-		    	//----------------> Verifica se ï¿½ hora do intervalo; <----------------//
-		    	if(x == Integer.parseInt(this.txtQtdAulas.getText())/2)
-		    	{
-		    		//----------------> Adiciona tempo do intervalo na hora da proxima aula; <----------------//
-		    		horainicio = horainicio.plusHours(this.horaDuracaoIntervalo.getHoras());
-		    		horainicio = horainicio.plusMinutes(this.horaDuracaoIntervalo.getMinutos());
-		    	}
-		    	//----------------> Cria nova hora do curso; <----------------//
-		    	Horario h = new Horario();
-		    	h.setHora_disp(horainicio);
+			}else if(this.cmbTiposCurso.getSelectionModel().getSelectedIndex() < 0) {
 
-		    	//----------------> Adiciona nova aula na lista de horarios; <----------------//
-		    	this.ListHorarios.add(h);
-		    	//----------------> Soma a duração de uma aula nas horas; <----------------//
+			}else if(this.listvMaterias.getItems().size() < 5) {
 
-		    	System.out.println(horadividida.substring(0, horadividida.indexOf(".")));
-		    	horainicio = horainicio.plusHours(Integer.parseInt(horadividida.substring(0, horadividida.indexOf("."))));
-		    	horainicio = horainicio.plusMinutes((long) Math.ceil(Double.parseDouble("0."+horadividida.substring(horadividida.indexOf(".")+1))*60));
-		    	System.out.println(horainicio.getHour()+":"+horainicio.getMinute());
-		    }
+			}else if(this.horaInicio.getTime().getHour() < 4 || this.horaInicio.getTime().getHour() > 21 || this.horaTermino.getTime().getHour() < 6 || this.horaTermino.getTime().getHour() > 0) {
 
-		    //----------------> Cria um curso novo; <----------------//
-		    //----------------> !!!!!!!!!!!!!!!!INCOMPLETO!!!!!!!!!!!!!!!!!; <----------------//
+			}else if(this.txtQtdAulas.getText().isEmpty() || Integer.parseInt(this.txtQtdAulas.getText()) > 3) {
 
-			Curso c = new Curso();
+			}else if(this.horaDuracaoIntervalo.getTime().getHour() > 1) {
 
-			c.setNome_curso(this.txtNomeCurso.getText());
-			c.setTipo_curso(this.cmbTiposCurso.getSelectionModel().getSelectedItem().toString());
-			c.setMaterias(this.ListMaterias);
-			c.setHorarios(this.ListHorarios);
+			}else {
+			    //----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
+			    LocalTime horainicio;
+			    LocalTime horafim;
+			    EntityManager gerenciador = Conexao.gerarGerenciador();
 
-			//----------------> Da INSERT no curso; <----------------//
-			gerenciador.getTransaction().begin();
-			gerenciador.persist(c);
-			gerenciador.getTransaction().commit();
-			gerenciador.close();
+			    //----------------> Define horas para o inicio e fim do curso; <----------------//
+			    horainicio = this.horaInicio.getTime();
+			    horafim = this.horaTermino.getTime();
+			    LocalTime horaduracao = horafim.minusHours(horainicio.getHour()).minusHours(this.horaDuracaoIntervalo.getHoras()).minusMinutes(horainicio.getHour()).minusMinutes(this.horaDuracaoIntervalo.getMinutos());
+		    	float dividehora = (((horaduracao.getHour()*60)+horaduracao.getMinute())/Integer.parseInt(this.txtQtdAulas.getText()));
+		    	String horadividida = String.valueOf(dividehora / 60);
+			    //----------------> Contador para definir o horario de cada aula do curso; <----------------//
+			    for(int x = 0;x < Integer.parseInt(this.txtQtdAulas.getText());x++)
+			    {
+			    	//----------------> Verifica se ï¿½ hora do intervalo; <----------------//
+			    	if(x == Integer.parseInt(this.txtQtdAulas.getText())/2)
+			    	{
+			    		//----------------> Adiciona tempo do intervalo na hora da proxima aula; <----------------//
+			    		horainicio = horainicio.plusHours(this.horaDuracaoIntervalo.getHoras());
+			    		horainicio = horainicio.plusMinutes(this.horaDuracaoIntervalo.getMinutos());
+			    	}
+			    	//----------------> Cria nova hora do curso; <----------------//
+			    	Horario h = new Horario();
+			    	h.setHora_disp(horainicio);
+
+			    	//----------------> Adiciona nova aula na lista de horarios; <----------------//
+			    	this.ListHorarios.add(h);
+			    	//----------------> Soma a duração de uma aula nas horas; <----------------//
+
+			    	//System.out.println(horadividida.substring(0, horadividida.indexOf(".")));
+			    	horainicio = horainicio.plusHours(Integer.parseInt(horadividida.substring(0, horadividida.indexOf("."))));
+			    	horainicio = horainicio.plusMinutes((long) Math.ceil(Double.parseDouble("0."+horadividida.substring(horadividida.indexOf(".")+1))*60));
+			    	//System.out.println(horainicio.getHour()+":"+horainicio.getMinute());
+			    }
+
+			    //----------------> Cria um curso novo; <----------------//
+			    //----------------> !!!!!!!!!!!!!!!!INCOMPLETO!!!!!!!!!!!!!!!!!; <----------------//
+			    try{
+					Curso c = new Curso();
+
+					c.setNome_curso(this.txtNomeCurso.getText());
+					c.setTipo_curso(this.cmbTiposCurso.getSelectionModel().getSelectedItem().toString());
+					c.setMaterias(this.ListMaterias);
+					c.setHorarios(this.ListHorarios);
+
+					//----------------> Da INSERT no curso; <----------------//
+					Conexao.insert(c);
+					MessageBox.ShowInfo("Sucesso", "Curso cadastrado com sucesso!");
+			    }catch (Exception e) {
+					MessageBox.ShowError("Erro!", "Erro ao inserir curso : " + e.getMessage());
+				}
+				limparCamposCurso();
+			}
 		});
 
 		//--------------------------------------------------------------------------------------//
@@ -271,9 +287,27 @@ public class JanelaCadastroHorarios extends Stage{
 		//----------------> Cria cena contendo o painel; <----------------//
 		Scene cena = new Scene(painel);
 		//----------------> Define a cena na janela; <----------------//
+		this.setTitle("Cadastro Curso");
 		this.setScene(cena);
 		//----------------> Mostra a Janela; <----------------//
 		this.show();
+	}
+
+	private void limparCamposCurso() {
+		this.txtNomeCurso.clear();
+		this.cmbTiposCurso.getSelectionModel().select(-1);
+		horaInicio.clear();
+		horaTermino.clear();
+		horaDuracaoIntervalo.clear();
+		txtQtdAulas.clear();
+		listvMaterias.getItems().clear();
+	}
+
+	private void limparCamposMateria() {
+		this.txtMateria.clear();
+		this.txtCargaHoraria.clear();
+		ckbIsDivisible.setSelected(false);
+		this.txtMateria.requestFocus();
 	}
 
 	//-------------------------------------------------------//

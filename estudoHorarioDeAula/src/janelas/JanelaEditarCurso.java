@@ -32,6 +32,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import controles.MessageBox;
 import controles.TimePicker;
 import entidades.Curso;
 import entidades.Horario;
@@ -123,7 +124,6 @@ public class JanelaEditarCurso extends Stage {
 		this.lblNewTipoCurso = new Label("Novo Tipo:");
 		this.lblCargaHoraria = new Label("Carga Horaria da Materia:");
 
-
 		this.txtMateria = new TextField();
 		this.txtHorario = new TextField();
 		this.txtQtdAulas = new TextField();
@@ -157,8 +157,7 @@ public class JanelaEditarCurso extends Stage {
 		this.ListHorarios = FXCollections.observableArrayList();
 		this.ListMaterias = FXCollections.observableArrayList();
 		this.ListCursos = FXCollections.observableArrayList();
-		this.TiposCurso = FXCollections.observableArrayList("ETIM", "Tecnico",
-				"Medio");
+		this.TiposCurso = FXCollections.observableArrayList("ETIM", "Tecnico", "Medio");
 
 		this.listvMaterias = new ListView();
 		this.listvCursos = new ListView<Curso>();
@@ -179,35 +178,30 @@ public class JanelaEditarCurso extends Stage {
 		this.cmbTiposCurso.setItems(TiposCurso);
 		this.cmbNewTipoCurso.setItems(TiposCurso);
 		this.listvMaterias.setItems(ListMaterias);
-		//this.listvHorarios.setItems(ListHorarios);
+		// this.listvHorarios.setItems(ListHorarios);
 
 		// ----------------> Adicionando componentes nas H/Vboxes;
 		// <----------------//
 		this.VBGeral.getChildren().addAll(this.VBNomeCurso, this.VBTipoCurso, this.listvCursos);
-		this.HBBotoes.getChildren().addAll(this.btnAdcMateria,
-				this.btnRmvMateria);
+		this.HBBotoes.getChildren().addAll(this.btnAdcMateria, this.btnRmvMateria);
 		this.VBCargaHoraria.getChildren().addAll(this.lblCargaHoraria, this.txtCargaHoraria);
 		this.HBCheckbox.getChildren().addAll(this.VBCargaHoraria, this.ckbIsDivisible);
-		this.VBNomeCurso.getChildren().addAll(this.lblFiltrosPesq ,this.lblNomeCurso,
-				this.txtNomeCurso);
-		this.VBTipoCurso.getChildren().addAll(this.lblTipoCurso,
-				this.cmbTiposCurso);
-		this.VBEscolhaMaterias.getChildren().addAll(this.lblNewNomeCurso, this.txtNewNomeCurso, this.lblNewTipoCurso, this.cmbNewTipoCurso, this.lblMateria,
-				this.txtMateria, this.HBCheckbox, this.HBBotoes, this.listvMaterias);
-		this.VBEscolhaHorarios.getChildren().addAll(this.lblHorario,
-				this.lblInicio, this.horaInicio, this.lblTermino,
-				this.horaTermino, this.lblIntervalo, this.horaDuracaoIntervalo,
-				this.lblQtdAulas, this.txtQtdAulas, this.btnEdtCurso,
-				this.btnVoltar);
+		this.VBNomeCurso.getChildren().addAll(this.lblFiltrosPesq, this.lblNomeCurso, this.txtNomeCurso);
+		this.VBTipoCurso.getChildren().addAll(this.lblTipoCurso, this.cmbTiposCurso);
+		this.VBEscolhaMaterias.getChildren().addAll(this.lblNewNomeCurso, this.txtNewNomeCurso, this.lblNewTipoCurso,
+				this.cmbNewTipoCurso, this.lblMateria, this.txtMateria, this.HBCheckbox, this.HBBotoes,
+				this.listvMaterias);
+		this.VBEscolhaHorarios.getChildren().addAll(this.lblHorario, this.lblInicio, this.horaInicio, this.lblTermino,
+				this.horaTermino, this.lblIntervalo, this.horaDuracaoIntervalo, this.lblQtdAulas, this.txtQtdAulas,
+				this.btnEdtCurso, this.btnVoltar);
 
-		this.VBGeral.setPadding(new Insets(5,5,5,5));
-		this.VBGeral.setBorder(new Border(new BorderStroke(Color.BLACK,BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
+		this.VBGeral.setPadding(new Insets(5, 5, 5, 5));
+		this.VBGeral.setBorder(new Border(
+				new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 		// ----------------> Adicionando tudo na HBox Principal;
 		// <----------------//
-		this.HBAlinhar.getChildren().addAll(this.VBGeral,
-				this.VBEscolhaMaterias, this.VBEscolhaHorarios);
+		this.HBAlinhar.getChildren().addAll(this.VBGeral, this.VBEscolhaMaterias, this.VBEscolhaHorarios);
 
 		// ----------------> Adicionando hbox Principal no painel;
 		// <----------------//
@@ -215,95 +209,109 @@ public class JanelaEditarCurso extends Stage {
 
 		// --------------------------------------------------------------------------------------//
 
-		// ----------------> DANDO A��O PARA OS BOT�ES; <----------------//
+		// ----------------> DANDO A��O PARA OS BOT�ES;
+		// <----------------//
 
 		this.txtNomeCurso.setOnKeyPressed(evento -> {
 			Query sql;
-			if (cmbTiposCurso.getSelectionModel().getSelectedIndex() > -1){
+			if (cmbTiposCurso.getSelectionModel().getSelectedIndex() > -1) {
 				ListCursos.clear();
-				sql = gerenciador.createQuery("from Curso Where tipo_curso = '"+ cmbTiposCurso.getSelectionModel().getSelectedItem() +"' and nome_curso like '%"+ txtNomeCurso.getText() +"%'");
-			}else{
+				sql = gerenciador.createQuery(
+						"from Curso Where tipo_curso = '" + cmbTiposCurso.getSelectionModel().getSelectedItem()
+								+ "' and nome_curso like '%" + txtNomeCurso.getText() + "%'");
+			} else {
 				ListCursos.clear();
-				sql = gerenciador.createQuery("from Curso Where nome_curso like '%"+ txtNomeCurso.getText() +"%'");
+				sql = gerenciador.createQuery("from Curso Where nome_curso like '%" + txtNomeCurso.getText() + "%'");
 			}
 			List<Curso> retornos = sql.getResultList();
-			if(retornos.size() > 0){
-				for(Curso c : retornos){
+			if (retornos.size() > 0) {
+				for (Curso c : retornos) {
 					ListCursos.add(c);
 				}
 				listvCursos.setItems(ListCursos);
-			}else{
+			} else {
 				ListCursos.clear();
 			}
 		});
 
-
 		this.listvCursos.setOnMouseClicked(value -> {
-			if(value.getClickCount() == 2){
+			if (value.getClickCount() == 2) {
 				cursoSelecionado = listvCursos.getSelectionModel().getSelectedItem();
 				listvMaterias.getItems().clear();
 				txtNewNomeCurso.setText(listvCursos.getSelectionModel().getSelectedItem().getNome_curso());
 				listvMaterias.getItems().addAll(listvCursos.getSelectionModel().getSelectedItem().getMaterias());
-				horaInicio.setTime(listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(0).getHora_disp());
+				horaInicio
+						.setTime(listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(0).getHora_disp());
 				LocalTime hora1 = listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(0).getHora_disp();
 				LocalTime hora2 = listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(1).getHora_disp();
 				LocalTime duracaoAula;
-				LocalTime hora3 = listvCursos.getSelectionModel().getSelectedItem().getHorarios().get((listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()/2)-1).getHora_disp();
-				LocalTime hora4 = listvCursos.getSelectionModel().getSelectedItem().getHorarios().get((listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()/2)).getHora_disp();
+				LocalTime hora3 = listvCursos.getSelectionModel().getSelectedItem().getHorarios()
+						.get((listvCursos.getSelectionModel().getSelectedItem().getHorarios().size() / 2) - 1)
+						.getHora_disp();
+				LocalTime hora4 = listvCursos.getSelectionModel().getSelectedItem().getHorarios()
+						.get((listvCursos.getSelectionModel().getSelectedItem().getHorarios().size() / 2))
+						.getHora_disp();
 				LocalTime duracaoIntervalo;
-				duracaoAula = LocalTime.of(hora2.minusHours(hora1.getHour()).getHour(),hora2.minusMinutes(hora2.getMinute()).getMinute());
+				duracaoAula = LocalTime.of(hora2.minusHours(hora1.getHour()).getHour(),
+						hora2.minusMinutes(hora2.getMinute()).getMinute());
 				duracaoIntervalo = LocalTime.of(0, hora4.minusMinutes(hora3.getMinute()).getMinute());
 				System.out.println(duracaoAula);
 				System.out.println(duracaoAula.getHour() + " - " + duracaoAula.getMinute());
-				horaTermino.setTime(listvCursos.getSelectionModel().getSelectedItem().getHorarios().get(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()-1).getHora_disp().plusHours(duracaoAula.getHour()).plusMinutes(duracaoAula.getMinute()));
+				horaTermino.setTime(listvCursos.getSelectionModel().getSelectedItem().getHorarios()
+						.get(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size() - 1).getHora_disp()
+						.plusHours(duracaoAula.getHour()).plusMinutes(duracaoAula.getMinute()));
 				horaDuracaoIntervalo.setTime(duracaoIntervalo);
-				txtQtdAulas.setText(String.valueOf(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()));
-				this.cmbNewTipoCurso.getSelectionModel().select(listvCursos.getSelectionModel().getSelectedItem().getTipo_curso());
+				txtQtdAulas.setText(
+						String.valueOf(listvCursos.getSelectionModel().getSelectedItem().getHorarios().size()));
+				this.cmbNewTipoCurso.getSelectionModel()
+						.select(listvCursos.getSelectionModel().getSelectedItem().getTipo_curso());
 			}
 		});
 
 		this.cmbTiposCurso.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Object>() {
-            @SuppressWarnings("rawtypes")
+			@SuppressWarnings("rawtypes")
 			@Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
-            	Query sql;
-	            if (txtNomeCurso.getText().length() > 0){
-	            	sql = gerenciador.createQuery("from Curso Where tipo_curso = '"+ cmbTiposCurso.getSelectionModel().getSelectedItem() +"' and nome_curso = '"+ txtNomeCurso.getText() +"'");
-	            }else{
-	            	sql = gerenciador.createQuery("from Curso Where tipo_curso = '"+ cmbTiposCurso.getSelectionModel().getSelectedItem() +"'");
-	            }
-	            List<Curso> retornos = sql.getResultList();
-        		if(retornos.size() > 0){
-	        		for(Curso c : retornos){
-	        			ListCursos.add(c);
-	        		}
-	        		listvCursos.setItems(ListCursos);
-        		}else{
-        			ListCursos.clear();
-        		}
-            }
+			public void changed(ObservableValue ov, Object t, Object t1) {
+				Query sql;
+				if (txtNomeCurso.getText().length() > 0) {
+					sql = gerenciador.createQuery(
+							"from Curso Where tipo_curso = '" + cmbTiposCurso.getSelectionModel().getSelectedItem()
+									+ "' and nome_curso = '" + txtNomeCurso.getText() + "'");
+				} else {
+					sql = gerenciador.createQuery("from Curso Where tipo_curso = '"
+							+ cmbTiposCurso.getSelectionModel().getSelectedItem() + "'");
+				}
+				List<Curso> retornos = sql.getResultList();
+				if (retornos.size() > 0) {
+					for (Curso c : retornos) {
+						ListCursos.add(c);
+					}
+					listvCursos.setItems(ListCursos);
+				} else {
+					ListCursos.clear();
+				}
+			}
 
-        });
-
+		});
 
 		// ----------------> BOT�O ADD MATERIA; <----------------//
 		this.btnAdcMateria.setOnAction(evento -> {
-			// ----------------> Verifica se o texto da materia n�o est� vazio; <----------------//
-				if (!this.txtMateria.getText().equals("")) {
-					// ----------------> Cria um novo objeto materia para ser adicionado � lista de materias; <----------------//
-					Materia m = new Materia();
-					m.setNome_materia(this.txtMateria.getText());
-					this.ListMaterias.add(m);
-					this.txtMateria.clear();
-					this.txtMateria.requestFocus();
-				}
-			});
+			// ----------------> Verifica se o texto da materia n�o est�
+			// vazio; <----------------//
+			if (!this.txtMateria.getText().equals("")) {
+				// ----------------> Cria um novo objeto materia para ser
+				// adicionado � lista de materias; <----------------//
+				Materia m = new Materia();
+				m.setNome_materia(this.txtMateria.getText());
+				this.ListMaterias.add(m);
+				limparCamposMateria();
+			}
+		});
 
 		// ----------------> BOT�O DELETE MATERIA; <----------------//
 		this.btnRmvMateria.setOnAction(evento -> {
 
-			ListMaterias.remove(this.listvMaterias.getSelectionModel()
-					.getSelectedIndex());
+			ListMaterias.remove(this.listvMaterias.getSelectionModel().getSelectedIndex());
 			this.txtMateria.requestFocus();
 
 		});
@@ -311,53 +319,62 @@ public class JanelaEditarCurso extends Stage {
 		// ----------------> BOT�O ADD CURSO; <----------------//
 		this.btnEdtCurso.setOnAction(evento -> {
 
-			// ----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
+			if (this.txtNewNomeCurso.getText().isEmpty()) {
+
+			} else if (this.cmbNewTipoCurso.getSelectionModel().getSelectedIndex() < 0) {
+
+			} else if (this.listvMaterias.getItems().size() < 5) {
+
+			} else if (this.horaInicio.getTime().getHour() < 4 || this.horaInicio.getTime().getHour() > 21 || this.horaTermino.getTime().getHour() < 6 || this.horaTermino.getTime().getHour() > 0) {
+
+			} else if (this.txtQtdAulas.getText().isEmpty() || Integer.parseInt(this.txtQtdAulas.getText()) % 2 != 0) {
+
+			} else if (this.horaDuracaoIntervalo.getTime().getHour() > 1) {
+
+			} else {
+				// ----------------> CRIA HORAS PARA INICIO E FIM DO CURSO;
+				// <----------------//
 				LocalTime horainicio;
 				LocalTime horafim;
 
-
-				// ----------------> Define horas para o inicio e fim do curso; <----------------//
+				// ----------------> Define horas para o inicio e fim do curso;
+				// <----------------//
 				horainicio = this.horaInicio.getTime();
 				horafim = this.horaTermino.getTime();
-				LocalTime horaduracao = horafim
-						.minusHours(horainicio.getHour())
-						.minusHours(this.horaDuracaoIntervalo.getHoras())
-						.minusMinutes(horainicio.getHour())
+				LocalTime horaduracao = horafim.minusHours(horainicio.getHour())
+						.minusHours(this.horaDuracaoIntervalo.getHoras()).minusMinutes(horainicio.getHour())
 						.minusMinutes(this.horaDuracaoIntervalo.getMinutos());
-				float dividehora = (((horaduracao.getHour() * 60) + horaduracao
-						.getMinute()) / Integer.parseInt(this.txtQtdAulas
-						.getText()));
+				float dividehora = (((horaduracao.getHour() * 60) + horaduracao.getMinute())
+						/ Integer.parseInt(this.txtQtdAulas.getText()));
 				String horadividida = String.valueOf(dividehora / 60);
-				// ----------------> Contador para definir o horario de cada aula do curso; <----------------//
+				// ----------------> Contador para definir o horario de cada
+				// aula do curso; <----------------//
 				for (int x = 0; x < Integer.parseInt(this.txtQtdAulas.getText()); x++) {
-					// ----------------> Verifica se � hora do intervalo; <----------------//
+					// ----------------> Verifica se � hora do intervalo;
+					// <----------------//
 					if (x == Integer.parseInt(this.txtQtdAulas.getText()) / 2) {
-						// ----------------> Adiciona tempo do intervalo na hora da proxima aula; <----------------//
-						horainicio = horainicio
-								.plusHours(this.horaDuracaoIntervalo.getHoras());
-						horainicio = horainicio
-								.plusMinutes(this.horaDuracaoIntervalo
-										.getMinutos());
+						// ----------------> Adiciona tempo do intervalo na hora
+						// da proxima aula; <----------------//
+						horainicio = horainicio.plusHours(this.horaDuracaoIntervalo.getHoras());
+						horainicio = horainicio.plusMinutes(this.horaDuracaoIntervalo.getMinutos());
 					}
-					// ----------------> Cria nova hora do curso; <----------------//
+					// ----------------> Cria nova hora do curso;
+					// <----------------//
 					Horario h = new Horario();
 					h.setHora_disp(horainicio);
 
-					// ----------------> Adiciona nova aula na lista de horarios; <----------------//
+					// ----------------> Adiciona nova aula na lista de
+					// horarios; <----------------//
 					this.ListHorarios.add(h);
-					// ----------------> Soma a dura��o de uma aula nas horas; <----------------//
+					// ----------------> Soma a dura��o de uma aula nas
+					// horas; <----------------//
 
-					System.out.println(horadividida.substring(0,
-							horadividida.indexOf(".")));
-					horainicio = horainicio.plusHours(Integer
-							.parseInt(horadividida.substring(0,
-									horadividida.indexOf("."))));
-					horainicio = horainicio.plusMinutes((long) Math.ceil(Double
-							.parseDouble("0."
-									+ horadividida.substring(horadividida
-											.indexOf(".") + 1)) * 60));
-					System.out.println(horainicio.getHour() + ":"
-							+ horainicio.getMinute());
+					System.out.println(horadividida.substring(0, horadividida.indexOf(".")));
+					horainicio = horainicio
+							.plusHours(Integer.parseInt(horadividida.substring(0, horadividida.indexOf("."))));
+					horainicio = horainicio.plusMinutes((long) Math.ceil(
+							Double.parseDouble("0." + horadividida.substring(horadividida.indexOf(".") + 1)) * 60));
+					System.out.println(horainicio.getHour() + ":" + horainicio.getMinute());
 				}
 
 				// ----------------> Cria um curso novo; <----------------//
@@ -365,14 +382,22 @@ public class JanelaEditarCurso extends Stage {
 				// !!!!!!!!!!!!!!!!INCOMPLETO!!!!!!!!!!!!!!!!!;
 				// <----------------//
 
-				cursoSelecionado.setNome_curso(txtNewNomeCurso.getText());
-				cursoSelecionado.setMaterias(ListMaterias);
-				cursoSelecionado.setTipo_curso(cmbTiposCurso.getSelectionModel().getSelectedItem().toString());
-				cursoSelecionado.setHorarios(ListHorarios);
+				try {
+					cursoSelecionado.setNome_curso(txtNewNomeCurso.getText());
+					cursoSelecionado.setMaterias(ListMaterias);
+					cursoSelecionado.setTipo_curso(cmbTiposCurso.getSelectionModel().getSelectedItem().toString());
+					cursoSelecionado.setHorarios(ListHorarios);
 
-				// ----------------> Da INSERT no curso; <----------------//
-				Conexao.update(cursoSelecionado);
-			});
+					// ----------------> Da INSERT no curso; <----------------//
+					Conexao.update(cursoSelecionado);
+					MessageBox.ShowInfo("Sucesso", "Curso editado com sucesso!");
+				} catch (Exception e) {
+					MessageBox.ShowError("Erro!", "Erro ao editar : " + e.getMessage());
+				}
+				limparCamposCurso();
+				listvCursos.getItems().clear();
+			}
+		});
 
 		// --------------------------------------------------------------------------------------//
 
@@ -391,10 +416,28 @@ public class JanelaEditarCurso extends Stage {
 		// ----------------> Cria cena contendo o painel; <----------------//
 		Scene cena = new Scene(painel);
 		// ----------------> Define a cena na janela; <----------------//
+		this.setTitle("Editar Curso");
 		this.setScene(cena);
 		// ----------------> Mostra a Janela; <----------------//
 		this.show();
 	}// TODO Auto-generated constructor stub
+
+	private void limparCamposCurso() {
+		this.txtNewNomeCurso.clear();
+		this.cmbNewTipoCurso.getSelectionModel().select(-1);
+		horaInicio.clear();
+		horaTermino.clear();
+		horaDuracaoIntervalo.clear();
+		txtQtdAulas.clear();
+		listvMaterias.getItems().clear();
+	}
+
+	private void limparCamposMateria() {
+		this.txtMateria.clear();
+		this.txtCargaHoraria.clear();
+		ckbIsDivisible.setSelected(false);
+		this.txtMateria.requestFocus();
+	}
 
 	// -------------------------------------------------------//
 	// ----------------> FIM; <----------------//

@@ -216,6 +216,11 @@ public class TimePicker extends HBox{
 		}
 	}
 
+	public void clear(){
+		HORAS.setText("00");
+		MINUTOS.setText("00");
+	}
+
 	private void somaremminuto(){
 		int minutos = Integer.parseInt(MINUTOS.getText());
 		if(minutos == 59)

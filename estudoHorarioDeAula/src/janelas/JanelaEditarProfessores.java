@@ -28,6 +28,7 @@ import controles.CelulaBotao;
 import controles.CelulaComCampoDeTexto;
 import controles.CelulaComCampoDeTextoDouble;
 import controles.CelulaComCampoDeTextoDoubleMax5;
+import controles.MessageBox;
 import entidades.Professor;
 
 public class JanelaEditarProfessores extends Stage {
@@ -179,12 +180,23 @@ public class JanelaEditarProfessores extends Stage {
 
 
 		btnSalvar.setOnAction(value -> {
-			for(Professor p : professoresEditados){
-				Conexao.update(p);
+
+			if(this.professoresEditados.size() < 1){
+
+			}else{
+				try{
+					for(Professor p : professoresEditados){
+						Conexao.update(p);
+					}
+					MessageBox.ShowInfo("Sucesso", "Professores editados com sucesso!");
+				} catch (Exception e) {
+					MessageBox.ShowInfo("Erro", "Erro ao inserir : " + e.getMessage());
+				}
 			}
 		});
 
 		Scene cena = new Scene(painel);
+		this.setTitle("Editar Professores");
 		this.setScene(cena);
 		this.show();
 

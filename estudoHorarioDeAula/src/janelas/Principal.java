@@ -43,6 +43,7 @@ public class Principal extends Application{
 	public void start(Stage arg0) throws Exception {
 		//----------------> Coisa de Testes :v pita EU TOU CERTO; <----------------//
 		System.out.println("Eu sou eu - Pau no seu cu!");
+		System.out.println("Nosa Jureg!");
 		//----------------> MOSTRA A JANELA PRINCIPAL (DEFAULT = JanelaLogin); <----------------//
 		JanelaDeGerarATabelinhaLa janela = new JanelaDeGerarATabelinhaLa();
 	}

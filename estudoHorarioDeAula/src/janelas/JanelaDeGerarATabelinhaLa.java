@@ -142,7 +142,7 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 
 		//----------------> Menu novo curso !Abre a janela de cadastro de cursos! <----------------//
 		novocurso.setOnAction(evento -> {
-			new JanelaCadastroHorarios();
+			new JanelaCadastroCursos();
 		});
 
 		//----------------> Menu novo professor !Abre a janela de cadastro de professores!; <----------------//

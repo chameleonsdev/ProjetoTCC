@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import Banco.Conexao;
+import controles.MessageBox;
 import entidades.Curso;
 import entidades.Materia;
 import entidades.Professor;
@@ -342,14 +343,19 @@ public class JanelaEditarMateriasCursos extends Stage {
 			}
 		});
 
-		// ----------------> BOTÃO CADASTRAR PROFESSOR; <----------------//
 		this.btnCadastrarProfessor.setOnAction(evento -> {
 
-			p.setCursos(listaDeCursosProfessor);
-			p.setMaterias(listaDeMateriasProfessor);
+			try{
+				p.setCursos(listaDeCursosProfessor);
+				p.setMaterias(listaDeMateriasProfessor);
 
-			Conexao.update(p);
+				Conexao.update(p);
 
+				MessageBox.ShowInfo("Sucesso", "Cursos e Materias do professor editado com sucesso!");
+				this.close();
+			}catch (Exception e) {
+				MessageBox.ShowError("Erro!", "Erro ao editar cursos e materias do professor : " + e.getMessage());
+			}
 		});
 
 		// --------------------------------------------------------------------------------------//
@@ -359,6 +365,7 @@ public class JanelaEditarMateriasCursos extends Stage {
 		// ----------------> Criando cena contendo o painel; <----------------//
 		Scene cena = new Scene(painelBonitasso);
 		// ----------------> Definindo cena para a janela; <----------------//
+		this.setTitle("Editar Cursos e Materias de "+p.getNome_professor());
 		this.setScene(cena);
 		// ----------------> Monstra a Janela; <----------------//
 		this.show();

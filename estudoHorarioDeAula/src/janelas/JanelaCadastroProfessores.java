@@ -24,6 +24,7 @@ import javax.swing.text.StyledEditorKit.BoldAction;
 
 
 import Banco.Conexao;
+import controles.MessageBox;
 import entidades.Curso;
 import entidades.Materia;
 import entidades.Professor;
@@ -287,19 +288,32 @@ public class JanelaCadastroProfessores extends Stage{
 		//----------------> BOTÃO CADASTRAR PROFESSOR; <----------------//
 		this.btnCadastrarProfessor.setOnAction(evento -> {
 
-			//----------------> Cria o Gerenciador de entidades; <----------------//
+			if(txtNomeProfDoubleDot.getText().isEmpty()){
 
-			//----------------> Cria novo objeto professor; <----------------//
-			Professor p = new Professor();
-			p.setNome_professor(txtNomeProfDoubleDot.getText());
-			p.setPontuacao(Double.parseDouble(txtPontuacao.getText()));
-			p.setNum_professor(txtNumProf.getText());
-			p.setCursos(listaDeCursosProfessor);
-			p.setMaterias(listaDeMateriasProfessor);
+			}else if(txtPontuacao.getText().isEmpty()){
 
-			//----------------> Da INSERT na tabela professor; <----------------//
-			Conexao.insert(p);
+			}else if(txtNumProf.getText().isEmpty()){
 
+			}else{
+				//----------------> Cria o Gerenciador de entidades; <----------------//
+
+				//----------------> Cria novo objeto professor; <----------------//
+				try{
+					Professor p = new Professor();
+					p.setNome_professor(txtNomeProfDoubleDot.getText());
+					p.setPontuacao(Double.parseDouble(txtPontuacao.getText()));
+					p.setNum_professor(txtNumProf.getText());
+					p.setCursos(listaDeCursosProfessor);
+					p.setMaterias(listaDeMateriasProfessor);
+
+					//----------------> Da INSERT na tabela professor; <----------------//
+					Conexao.insert(p);
+					MessageBox.ShowInfo("Sucesso", "Professor cadastrado com sucesso!");
+				} catch (Exception e) {
+					MessageBox.ShowError("Erro!", "Erro ao inserir professor : " + e.getMessage());
+				}
+				limparCampos();
+			}
 		});
 
 		//--------------------------------------------------------------------------------------//
@@ -309,6 +323,7 @@ public class JanelaCadastroProfessores extends Stage{
 		//----------------> Criando cena contendo o painel; <----------------//
 		Scene cena = new Scene(painelBonitasso);
 		//----------------> Definindo cena para a janela; <----------------//
+		this.setTitle("Cadastro de Professores");
 		this.setScene(cena);
 		//----------------> Monstra a Janela; <----------------//
 		this.show();
@@ -318,5 +333,14 @@ public class JanelaCadastroProfessores extends Stage{
 		//----------------> TA TUDO BEM AGORA; <----------------//
 		//-------------------------------------------------------//
 
+	}
+
+	private void limparCampos() {
+		txtNomeProfDoubleDot.clear();
+		txtNumProf.clear();
+		txtPontuacao.clear();
+		rootItem.getChildren().clear();
+		cboCursoProfessor.getSelectionModel().select(-1);
+		cboMateriaCurso.getSelectionModel().select(-1);
 	}
 }
