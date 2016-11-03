@@ -55,9 +55,9 @@ public class JanelaCadastroCursos extends Stage{
 
 	private CheckBox ckbIsDivisible;
 
-	private TimePicker horaInicio;
-	private TimePicker horaTermino;
-	private TimePicker horaDuracaoIntervalo;
+	//private TimePicker horaInicio;
+	//private TimePicker horaTermino;
+	//private TimePicker horaDuracaoIntervalo;
 
 	private Button btnVoltar;
 	private Button btnAdcCurso;
@@ -113,9 +113,9 @@ public class JanelaCadastroCursos extends Stage{
 
 		this.ckbIsDivisible = new CheckBox("A materia é divisivel?");
 
-		this.horaInicio = new TimePicker();
-		this.horaTermino = new TimePicker();
-		this.horaDuracaoIntervalo = new TimePicker();
+		//this.horaInicio = new TimePicker();
+		//this.horaTermino = new TimePicker();
+		//this.horaDuracaoIntervalo = new TimePicker();
 
 		this.btnVoltar = new Button("Voltar");
 		this.btnAdcCurso = new Button("Adicionar Curso");
@@ -136,7 +136,7 @@ public class JanelaCadastroCursos extends Stage{
 
 		this.ListHorarios = FXCollections.observableArrayList();
 		this.ListMaterias = FXCollections.observableArrayList();
-		this.TiposCurso = FXCollections.observableArrayList("ETIM", "Tecnico", "Medio");
+		this.TiposCurso = FXCollections.observableArrayList("ETIM", "Tecnico Vespertino", "Tecnico Noturno", "Medio");
 
 		this.listvMaterias = new ListView();
 		this.listvHorarios = new ListView();
@@ -162,7 +162,7 @@ public class JanelaCadastroCursos extends Stage{
 		this.VBNomeCurso.getChildren().addAll(this.lblNomeCurso,this.txtNomeCurso);
 		this.VBTipoCurso.getChildren().addAll(this.lblTipoCurso,this.cmbTiposCurso);
 		this.VBEscolhaMaterias.getChildren().addAll(this.lblMateria,this.txtMateria, this.HBCheckbox,this.HBBotoes,this.listvMaterias);
-		this.VBEscolhaHorarios.getChildren().addAll(this.lblHorario,this.lblInicio,this.horaInicio,this.lblTermino,this.horaTermino,this.lblIntervalo,this.horaDuracaoIntervalo,this.lblQtdAulas,this.txtQtdAulas,this.btnAdcCurso,this.btnVoltar);
+		this.VBEscolhaHorarios.getChildren().addAll(this.lblHorario,this.lblInicio,this.lblQtdAulas,this.txtQtdAulas,this.btnAdcCurso,this.btnVoltar);
 
 		//----------------> Adicionando tudo na HBox Principal; <----------------//
 		this.HBAlinhar.getChildren().addAll(this.VBGeral,this.VBEscolhaMaterias,this.VBEscolhaHorarios);
@@ -200,7 +200,7 @@ public class JanelaCadastroCursos extends Stage{
 		//----------------> BOTï¿½O ADD CURSO; <----------------//
 		this.btnAdcCurso.setOnAction(evento -> {
 
-			if(this.txtNomeCurso.getText().isEmpty()) {
+			/*if(this.txtNomeCurso.getText().isEmpty()) {
 
 			}else if(this.cmbTiposCurso.getSelectionModel().getSelectedIndex() < 0) {
 
@@ -212,60 +212,114 @@ public class JanelaCadastroCursos extends Stage{
 
 			}else if(this.horaDuracaoIntervalo.getTime().getHour() > 1) {
 
-			}else {
-			    //----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
-			    LocalTime horainicio;
-			    LocalTime horafim;
-			    EntityManager gerenciador = Conexao.gerarGerenciador();
+			}else {*/
+			    //'	----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
+				LocalTime horaInicio = null;
+				LocalTime horaFim = null;
+				LocalTime horaduracao = null;
+				LocalTime horaIntervalo = null;
+				LocalTime horaAulaAtual = null;
+
+				int numeroDeAulas = 0;
+
+				if (cmbTiposCurso.getSelectionModel().getSelectedItem().equals("Medio")){
+
+					horaInicio = LocalTime.of(07, 00);
+					horaFim = LocalTime.of(11, 30);
+					horaIntervalo = LocalTime.of(00, 20);
+					numeroDeAulas = 5;
+					horaduracao = LocalTime.of(horaFim.minusHours(horaInicio.plusHours(horaIntervalo.getHour()).getHour()).getHour(), horaFim.minusMinutes(horaInicio.plusMinutes(horaIntervalo.getMinute()).getMinute()).getMinute());
+					float horasEmMinutos = (horaduracao.getHour() * 60) + horaduracao.getMinute();
+					float horaDividida = (horasEmMinutos / numeroDeAulas) / 60;
+
+					horaduracao = LocalTime.of(Integer.parseInt(String.valueOf(horaDividida).substring(0, String.valueOf(horaDividida).indexOf("."))), (int) Math.ceil(Double.parseDouble("0." + String.valueOf(horaDividida).substring(String.valueOf(horaDividida).indexOf(".")+1))*60));
+
+					horaAulaAtual = horaInicio;
+					//horainicio.plusMinutes((long) Math.ceil(Double.parseDouble("0."+horadividida.substring(horadividida.indexOf(".")+1))*60));
+				}else if (cmbTiposCurso.getSelectionModel().getSelectedItem().equals("ETIM")){
+
+
+					horaInicio = LocalTime.of(07, 00);
+					horaFim = LocalTime.of(14, 55);
+					horaIntervalo = LocalTime.of(01, 20);
+					numeroDeAulas = 8;
+					horaduracao = LocalTime.of(horaFim.minusHours(horaInicio.plusHours(horaIntervalo.getHour()).getHour()).getHour(), horaFim.minusMinutes(horaInicio.plusMinutes(horaIntervalo.getMinute()).getMinute()).getMinute());
+					float horasEmMinutos = (horaduracao.getHour() * 60) + horaduracao.getMinute();
+					float horaDividida = (horasEmMinutos / numeroDeAulas) / 60;
+
+					horaduracao = LocalTime.of(Integer.parseInt(String.valueOf(horaDividida).substring(0, String.valueOf(horaDividida).indexOf("."))), (int) Math.ceil(Double.parseDouble("0." + String.valueOf(horaDividida).substring(String.valueOf(horaDividida).indexOf(".")+1))*60));
+
+					horaAulaAtual = horaInicio;
+				}else if(cmbTiposCurso.getSelectionModel().getSelectedItem().equals("Tecnico Vespertino")){
+
+					horaInicio = LocalTime.of(13, 15);
+					horaFim = LocalTime.of(17, 45);
+					horaIntervalo = LocalTime.of(00, 20);
+					numeroDeAulas = 4;
+					horaduracao = LocalTime.of(horaFim.minusHours(horaInicio.plusHours(horaIntervalo.getHour()).getHour()).getHour(), horaFim.minusMinutes(horaInicio.plusMinutes(horaIntervalo.getMinute()).getMinute()).getMinute());
+					float horasEmMinutos = (horaduracao.getHour() * 60) + horaduracao.getMinute();
+					float horaDividida = (horasEmMinutos / 5) / 60;
+
+					horaduracao = LocalTime.of(Integer.parseInt(String.valueOf(horaDividida).substring(0, String.valueOf(horaDividida).indexOf("."))), (int) Math.ceil(Double.parseDouble("0." + String.valueOf(horaDividida).substring(String.valueOf(horaDividida).indexOf(".")+1))*60));
+
+					horaAulaAtual = horaInicio;
+				}else if(cmbTiposCurso.getSelectionModel().getSelectedItem().equals("Tecnico Noturno")){
+
+					horaInicio = LocalTime.of(18, 50);
+					horaFim = LocalTime.of(22, 50);
+					horaIntervalo = LocalTime.of(00, 20);
+					numeroDeAulas = 4;
+					horaduracao = LocalTime.of(horaFim.minusHours(horaInicio.plusHours(horaIntervalo.getHour()).getHour()).getHour(), horaFim.minusMinutes(horaInicio.plusMinutes(horaIntervalo.getMinute()).getMinute()).getMinute());
+					float horasEmMinutos = (horaduracao.getHour() * 60) + horaduracao.getMinute();
+					float horaDividida = (horasEmMinutos / 5) / 60;
+
+					horaduracao = LocalTime.of(Integer.parseInt(String.valueOf(horaDividida).substring(0, String.valueOf(horaDividida).indexOf("."))), (int) Math.ceil(Double.parseDouble("0." + String.valueOf(horaDividida).substring(String.valueOf(horaDividida).indexOf(".")+1))*60));
+
+					horaAulaAtual = horaInicio;
+				}
+
+
+
+				for(int contador = 1; contador <= numeroDeAulas; contador ++) {
+					if(contador > 1 && cmbTiposCurso.getSelectionModel().getSelectedItem() == "ETIM"){
+						if(contador == 4){
+							horaAulaAtual = horaAulaAtual.plusMinutes(0).plusMinutes(20);
+						}
+						else if (contador == 7){
+							horaAulaAtual = horaAulaAtual.plusMinutes(0).plusMinutes(55);
+						}
+						horaAulaAtual = horaAulaAtual.plusMinutes(horaduracao.getMinute());
+					}else if(contador > 1 && cmbTiposCurso.getSelectionModel().getSelectedItem() == "Medio"){
+						if(contador == 4){
+							horaAulaAtual = horaAulaAtual.plusMinutes(0).plusMinutes(20);
+						}
+						horaAulaAtual = horaAulaAtual.plusMinutes(horaduracao.getMinute());
+					}else if(contador > 1 && cmbTiposCurso.getSelectionModel().getSelectedItem() == "Tecnico Vespertino"){
+						if(contador == 3){
+							horaAulaAtual = horaAulaAtual.plusMinutes(0).plusMinutes(17);
+						}
+						horaAulaAtual = horaAulaAtual.plusMinutes(horaduracao.getMinute()).plusMinutes(horaduracao.getMinute() / 4);
+					}else if(contador > 1 && cmbTiposCurso.getSelectionModel().getSelectedItem() == "Tecnico Noturno"){
+						if(contador == 3){
+							horaAulaAtual = horaAulaAtual.plusMinutes(0).plusMinutes(13);
+						}
+						horaAulaAtual = horaAulaAtual.plusMinutes(horaduracao.getMinute());
+					}
+					System.out.println(horaAulaAtual);
+					Horario h = new Horario();
+					h.setHora_disp(horaAulaAtual);
+					ListHorarios.add(h);
+				}
+
+					System.out.println("separador -------------------------");
+
+				for (Horario horario : ListHorarios) {
+
+					System.out.println(horario.getHora_disp());
+				}
 
 			    //----------------> Define horas para o inicio e fim do curso; <----------------//
-			    horainicio = this.horaInicio.getTime();
-			    horafim = this.horaTermino.getTime();
-			    LocalTime horaduracao = horafim.minusHours(horainicio.getHour()).minusHours(this.horaDuracaoIntervalo.getHoras()).minusMinutes(horainicio.getHour()).minusMinutes(this.horaDuracaoIntervalo.getMinutos());
-		    	float dividehora = (((horaduracao.getHour()*60)+horaduracao.getMinute())/Integer.parseInt(this.txtQtdAulas.getText()));
-		    	String horadividida = String.valueOf(dividehora / 60);
-			    //----------------> Contador para definir o horario de cada aula do curso; <----------------//
-			    for(int x = 0;x < Integer.parseInt(this.txtQtdAulas.getText());x++)
-			    {
-			    	//----------------> Verifica se ï¿½ hora do intervalo; <----------------//
-			    	if(x == Integer.parseInt(this.txtQtdAulas.getText())/2)
-			    	{
-			    		//----------------> Adiciona tempo do intervalo na hora da proxima aula; <----------------//
-			    		horainicio = horainicio.plusHours(this.horaDuracaoIntervalo.getHoras());
-			    		horainicio = horainicio.plusMinutes(this.horaDuracaoIntervalo.getMinutos());
-			    	}
-			    	//----------------> Cria nova hora do curso; <----------------//
-			    	Horario h = new Horario();
-			    	h.setHora_disp(horainicio);
-
-			    	//----------------> Adiciona nova aula na lista de horarios; <----------------//
-			    	this.ListHorarios.add(h);
-			    	//----------------> Soma a duração de uma aula nas horas; <----------------//
-
-			    	//System.out.println(horadividida.substring(0, horadividida.indexOf(".")));
-			    	horainicio = horainicio.plusHours(Integer.parseInt(horadividida.substring(0, horadividida.indexOf("."))));
-			    	horainicio = horainicio.plusMinutes((long) Math.ceil(Double.parseDouble("0."+horadividida.substring(horadividida.indexOf(".")+1))*60));
-			    	//System.out.println(horainicio.getHour()+":"+horainicio.getMinute());
-			    }
-
-			    //----------------> Cria um curso novo; <----------------//
-			    //----------------> !!!!!!!!!!!!!!!!INCOMPLETO!!!!!!!!!!!!!!!!!; <----------------//
-			    try{
-					Curso c = new Curso();
-
-					c.setNome_curso(this.txtNomeCurso.getText());
-					c.setTipo_curso(this.cmbTiposCurso.getSelectionModel().getSelectedItem().toString());
-					c.setMaterias(this.ListMaterias);
-					c.setHorarios(this.ListHorarios);
-
-					//----------------> Da INSERT no curso; <----------------//
-					Conexao.insert(c);
-					MessageBox.ShowInfo("Sucesso", "Curso cadastrado com sucesso!");
-			    }catch (Exception e) {
-					MessageBox.ShowError("Erro!", "Erro ao inserir curso : " + e.getMessage());
-				}
-				limparCamposCurso();
-			}
+			//}
 		});
 
 		//--------------------------------------------------------------------------------------//
@@ -296,9 +350,9 @@ public class JanelaCadastroCursos extends Stage{
 	private void limparCamposCurso() {
 		this.txtNomeCurso.clear();
 		this.cmbTiposCurso.getSelectionModel().select(-1);
-		horaInicio.clear();
+		/*horaInicio.clear();
 		horaTermino.clear();
-		horaDuracaoIntervalo.clear();
+		horaDuracaoIntervalo.clear();*/
 		txtQtdAulas.clear();
 		listvMaterias.getItems().clear();
 	}
