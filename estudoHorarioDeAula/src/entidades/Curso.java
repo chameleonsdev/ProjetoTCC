@@ -2,7 +2,9 @@ package entidades;
 
 import java.util.List;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -28,6 +30,8 @@ public class Curso {
 	
 	private StringProperty tipo_curso;
 	
+	private IntegerProperty modulo_curso;
+	
 	List<Professor> professores;
 	
 	List<Materia> materias;
@@ -39,6 +43,7 @@ public class Curso {
 		id_curso = new SimpleLongProperty();
 		nome_curso = new SimpleStringProperty();
 		tipo_curso = new SimpleStringProperty();
+		modulo_curso = new SimpleIntegerProperty();
 		
 	}
 
@@ -75,6 +80,19 @@ public class Curso {
 
 	public void setTipo_curso(String tipo_curso) {
 		this.tipo_curso.set(tipo_curso);
+	}
+	
+	@Column
+	public int getModulo_curso() {
+		return modulo_curso.get();
+	}
+	
+	public IntegerProperty Modulo_curso() {
+		return modulo_curso;
+	}
+
+	public void setModulo_curso(int modulo_curso) {
+		this.modulo_curso.set(modulo_curso);
 	}
 	
 	//Get e set da lista de professores do curso

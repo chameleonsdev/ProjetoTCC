@@ -4,10 +4,15 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import controles.TabelaHorario;
 import entidades.Curso;
+import entidades.Horario;
 import Banco.Conexao;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -15,10 +20,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 @SuppressWarnings("rawtypes") //----------------> SAI WARNING!!!; <----------------//
@@ -28,8 +36,6 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 
 	//----------------> DEFININDO PROPRIEDADES; <----------------//
 
-	private HBox HbButtons;
-
 	private Menu mnAjuda;
 	private Menu mnOpcoes;
 	private Menu mnArquivo;
@@ -37,23 +43,17 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 
 	private MenuBar menuBar;
 
-	private AnchorPane root;
+	private VBox root;
+	
+	private TabPane teste;
 
-	private Label lblCurso;
-
-	private ComboBox<Curso> cmbCurso;
-
-	private Button gerarHorario;
-
-	private TableView<String> tabelasso;
-
-	private TableColumn sextaCol;
-	private TableColumn tercaCol;
-	private TableColumn quintaCol;
-	private TableColumn quartaCol;
-	private TableColumn segundaCol;
+	//private ComboBox<Curso> cmbCurso;
+	
+	private ComboBox<String> cmbModulo;
 
 	private ObservableList<Curso> listaDeCursos;
+	
+	private ObservableList<String> listaDeModulos;
 
 	//--------------------------------------------------------------------------------------//
 
@@ -64,8 +64,6 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 
 		//----------------> INSTANCIANDO AS PARADAS; <----------------//
 
-		this.HbButtons = new HBox(5);
-
 		this.mnAjuda = new Menu("Ajuda");
 		this.mnOpcoes = new Menu("Opções");
 		this.mnArquivo = new Menu("Arquivo");
@@ -73,26 +71,21 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 
 		this.menuBar = new MenuBar();
 
-		this.root = new AnchorPane();
+		this.root = new VBox();
+		
+		this.teste = new TabPane();
 
-		this.lblCurso = new Label("Curso: ");
-
-		this.cmbCurso = new ComboBox<Curso>();
-
-		this.gerarHorario = new Button("Gerar Horario");
-
-		this.tabelasso = new TableView<String>();
-
-		this.sextaCol = new TableColumn("Sexta-Feira");
-		this.tercaCol = new TableColumn("Terça-Feira");
-		this.quintaCol = new TableColumn("Quinta-Feira");
-		this.quartaCol = new TableColumn("Quarta-Feira");
-		this.segundaCol = new TableColumn("Segunda-Feira");
+		this.cmbModulo = new ComboBox<String>();
 
 		this.listaDeCursos = FXCollections.observableArrayList();
+		
+		this.listaDeModulos = FXCollections.observableArrayList("Primeiro", "Segundo", "Terceiro");
 
 		//-------------------------------------------------------------//
-
+		
+		
+		
+		
 		//----------------> Criando SubMenus; <----------------//
 		MenuItem sair = new MenuItem("Sair");
 		MenuItem novohorario = new MenuItem("Novo Horario");
@@ -114,10 +107,6 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		EntityManager gerenciador = Conexao.gerarGerenciador();
 
 		//----------------> Adicionando componentes na hbox inferior; <----------------//
-		HbButtons.getChildren().addAll(gerarHorario,lblCurso,cmbCurso);
-
-		//----------------> Adicionando as colunas na tabela; <----------------//
-				tabelasso.getColumns().addAll(segundaCol,tercaCol,quartaCol,quintaCol,sextaCol);
 
 		//-------------------------------------------------------------//
 
@@ -128,7 +117,7 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 			listaDeCursos.add(i);
 		}
 
-		cmbCurso.getItems().addAll(listaDeCursos);
+		cmbModulo.getItems().addAll(listaDeModulos);
 		//-------------------------------------------------------------------------------------------------//
 
 		//-------------------------------------------------------------------------------------------------//
@@ -161,28 +150,99 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		editarProfessor.setOnAction(value -> {
 			new JanelaEditarProfessores();
 		});
+		
+		atribuirhorarios.setOnAction(value -> {
+			new JanelaDeQuestionMark();
+		});
 
+		this.root.setAlignment(Pos.TOP_CENTER);
+		this.cmbModulo.setMaxWidth(Double.MAX_VALUE);
 
 		//-------------------------------------------------------------------------------------------------//
 
 		//----------------> UM POUCO DE DESIGN; <----------------//
 
 		//----------------> Define espaçamento dos elementos no AnchorPane; <----------------//
-		AnchorPane.setTopAnchor(tabelasso, 26d);
-		AnchorPane.setBottomAnchor(tabelasso, 26d);
-		AnchorPane.setTopAnchor(HbButtons, 600d);
-		AnchorPane.setBottomAnchor(HbButtons, 0d);
+		
 		//----------------> Deixa a barra de menu da largura da janela; <----------------//
 		menuBar.prefWidthProperty().bind(this.widthProperty());
 
 		//-------------------------------------------------------------------------------------------------//
-
+		
+		cmbModulo.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+	        public void changed(ObservableValue ov, String t, String t1) {
+				if(root.getChildren().size() == 4){
+					root.getChildren().remove(2);
+				}
+				if(t1.equals("Primeiro")){
+					teste.getTabs().clear();
+					for (Curso curso : listaDeCursos) {
+						if(curso.getModulo_curso() == 1){
+							Tab tab = new Tab();
+							tab.setText(curso.getNome_curso());
+							tab.setClosable(false);
+							TabelaHorario tableasas = new TabelaHorario();
+							ObservableList<Horario> hList = FXCollections.observableArrayList();
+							for (Horario h : curso.getHorarios()) {
+								hList.add(h);
+							}
+							tableasas.setItems(hList);
+							//tableasas.
+							tab.setContent(tableasas);
+							teste.getTabs().add(tab);
+						}		
+					}
+				}else if(t1.equals("Segundo")){
+					teste.getTabs().clear();
+					for (Curso curso : listaDeCursos) {
+						if(curso.getModulo_curso() == 2){
+							Tab tab = new Tab();
+							tab.setText(curso.getNome_curso());
+							tab.setClosable(false);
+							TabelaHorario tableasas = new TabelaHorario();
+							ObservableList<Horario> hList = FXCollections.observableArrayList();
+							for (Horario h : curso.getHorarios()) {
+								hList.add(h);
+							}
+							tableasas.setItems(hList);
+							tab.setContent(tableasas);
+							teste.getTabs().add(tab);
+						}		
+					}
+				}else if(t1.equals("Terceiro")){
+					teste.getTabs().clear();
+					for (Curso curso : listaDeCursos) {
+						if(curso.getModulo_curso() == 3){
+							Tab tab = new Tab();
+							tab.setText(curso.getNome_curso());
+							tab.setClosable(false);
+							TabelaHorario tableasas = new TabelaHorario();
+							ObservableList<Horario> hList = FXCollections.observableArrayList();
+							for (Horario h : curso.getHorarios()) {
+								hList.add(h);
+							}
+							tableasas.setItems(hList);
+							tab.setContent(tableasas);
+							teste.getTabs().add(tab);
+							//teste.getTabs().get(teste.getTabs().size() - 1).getContent().;
+						}		
+					}
+				}
+			}
+		});
+		
 		//-------------------------------------------------------------------------------------------------//
-
+		
+		System.out.println(this.getHeight());
+		
 		//----------------> DEFINIÇÕES DA JANELA; <----------------//
-
+		this.setMinWidth(600);
+		this.setMinHeight(650);
+		this.setMaxWidth(600);
+		this.setMaxHeight(650);
 		//----------------> Adicionando tudo no AnchorPane; <----------------//
-		root.getChildren().addAll(menuBar,tabelasso,HbButtons);
+		root.getChildren().addAll(menuBar, cmbModulo, new Label("Selecione um Modulo!"),teste);
 		//----------------> Criando cena contendo o AnchorPane; <----------------//
 		Scene scene = new Scene(root);
 		//----------------> Adicionando cena na janela; <----------------//

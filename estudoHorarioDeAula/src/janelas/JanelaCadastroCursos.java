@@ -791,7 +791,9 @@ public class JanelaCadastroCursos extends Stage{
 
 			}else {*/
 			    //'	----------------> CRIA HORAS PARA INICIO E FIM DO CURSO; <----------------//
-				LocalTime horaInicio = null;
+			ListHorarios.clear();	
+			
+			LocalTime horaInicio = null;
 				LocalTime horaFim = null;
 				LocalTime horaduracao = null;
 				LocalTime horaIntervalo = null;
@@ -894,6 +896,15 @@ public class JanelaCadastroCursos extends Stage{
 							c.setNome_curso(txtNomeCurso.getText());
 							c.setMaterias(ListMaterias);
 							c.setHorarios(ListHorarios);
+							if(txtModulo.getSelectionModel().getSelectedItem().equals("Primeiro")){
+								c.setModulo_curso(1);								
+							}else if(txtModulo.getSelectionModel().getSelectedItem().equals("Segundo")){
+								c.setModulo_curso(2);	
+							}else if(txtModulo.getSelectionModel().getSelectedItem().equals("Terceiro")){
+								c.setModulo_curso(3);	
+							}else if(txtModulo.getSelectionModel().getSelectedItem().equals("Quarto")){
+								c.setModulo_curso(4);	
+							}
 							Conexao.insert(c);
 							limparCamposCurso();
 							MessageBox.ShowInfo("Sucesso!", "Cadastrado com Sucesso");
