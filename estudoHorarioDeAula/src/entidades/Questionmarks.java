@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 @Entity
 public class Questionmarks {
@@ -27,12 +29,15 @@ public class Questionmarks {
 	private LocalTime hora_saida;
 
 	private Professor professor;
+	
+	private StringProperty diasemana;
 
 	//List<Professor> professores;
 
 	public Questionmarks() {
 
 		id_questionmark = new SimpleLongProperty();
+		diasemana = new SimpleStringProperty();
 
 	}
 
@@ -42,7 +47,7 @@ public class Questionmarks {
 		return id_questionmark.get();
 	}
 
-	public LongProperty Id_professor() {
+	public LongProperty Id_Questionmark() {
 		return id_questionmark;
 	}
 
@@ -79,9 +84,24 @@ public class Questionmarks {
 	}
 
 
+	@Column
+	public String getDiasemana() {
+		return diasemana.get();
+	}
 
+	public StringProperty Diasemana() {
+		return diasemana;
+	}
 
+	public void setDiasemana(String diasemana) {
+		this.diasemana.set(diasemana);
+	}
 
+	//Retornar string no objeto (TESTE)
+			@Override
+		    public String toString() {
+		        return String.valueOf(this.getId_questionmark());
+		    }
 
 
 
