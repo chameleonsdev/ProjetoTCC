@@ -6,6 +6,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import entidades.Professor;
+import janelas.JanelaDeEditarQuestionmark;
 import janelas.JanelaEditarMateriasCursos;
 import janelas.JanelaEditarProfessores;
 
@@ -36,6 +37,13 @@ public class CelulaBotao implements
 						janelaEProf = new JanelaEditarMateriasCursos((Professor) this.getTableRow().getItem());
 					}
 					janelaEProf.show();
+				}
+				if(this.getTableColumn().getText().equals("Disponibilidades")){
+					JanelaDeEditarQuestionmark janelaEdisp = null;
+					if(janelaEdisp == null){
+						janelaEdisp = new JanelaDeEditarQuestionmark((Professor) this.getTableRow().getItem());
+					}
+					janelaEdisp.show();
 				}
 			});
 

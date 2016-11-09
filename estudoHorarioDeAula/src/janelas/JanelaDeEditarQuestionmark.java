@@ -17,15 +17,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class JanelaDeQuestionMark extends Stage {
+public class JanelaDeEditarQuestionmark extends Stage {
 
-	private Label lblSelecioneCurso;
-	private Label lblSelecioneProfessor;
+//	private Label lblSelecioneCurso;
+	//private Label lblSelecioneProfessor;
 	private Label lblPontuacaoProfessor;
 	private Label lblValorPontuacao;
 	private Label lblDispDe;
@@ -36,6 +37,8 @@ public class JanelaDeQuestionMark extends Stage {
 	private Button btnRemoverDisp;
 	private Button btnSalvar;
 	private Button btnEditar;
+
+	private TextField nomeDoProfessor;
 
 	private Questionmarks qParaEditar = new Questionmarks();
 
@@ -63,20 +66,23 @@ public class JanelaDeQuestionMark extends Stage {
 
 	private ListView<Questionmarks> lvDispsDiaSemana;
 
-	public JanelaDeQuestionMark() {
+	public JanelaDeEditarQuestionmark(Professor pEdit) {
 
 		List<Curso> selectcurso = Conexao.select("Curso");
 		for (Curso i : selectcurso) {
 			this.listCurso.add(i);
 		}
 
-		this.lblSelecioneCurso = new Label("Curso: ");
-		this.lblSelecioneProfessor = new Label("Professor: ");
+		//this.lblSelecioneCurso = new Label("Curso: ");
+		//this.lblSelecioneProfessor = new Label("Professor: ");
 		this.lblValorPontuacao = new Label("0000.00");
 		this.lblPontuacaoProfessor = new Label("Pontuação: ");
 		this.lblSelecioneDiaSemana = new Label("Dia da Semana: ");
 		this.lblDispDe = new Label("Disponível Das: ");
 		this.lblDispAte = new Label("Disponível Até As: ");
+
+		this.nomeDoProfessor = new TextField();
+		this.nomeDoProfessor.setEditable(false);
 
 		this.btnAdicionarDisp = new Button("Adicionar");
 		this.btnAdicionarDisp.setOnAction(event -> {
@@ -94,13 +100,14 @@ public class JanelaDeQuestionMark extends Stage {
 
 				MessageBox.ShowInfo("Sucesso!",
 						"Disponibilidade inserida com Sucesso!");
-				atualizarList();
+				atualizarList(pEdit);
 			} catch (Exception e) {
 				MessageBox.ShowError("Erro!", "Erro ao inserir Disponibilidade"
 						+ e.getMessage());
 			}
 
 		});
+
 
 		this.lvDispsDiaSemana = new ListView<Questionmarks>();
 		this.lvDispsDiaSemana.setPrefHeight(80d);
@@ -110,6 +117,8 @@ public class JanelaDeQuestionMark extends Stage {
 		this.btnSalvar = new Button("Salvar Disponibilidade");
 		this.btnEditar = new Button("Editar Disponibilidade");
 		this.btnEditar.setDisable(true);
+
+		this.nomeDoProfessor.setText(pEdit.getNome_professor());
 
 		this.cbSelecionarCurso = new ComboBox<>();
 		this.cbSelecionarCurso.setItems(listCurso);
@@ -165,7 +174,7 @@ public class JanelaDeQuestionMark extends Stage {
 					public void changed(ObservableValue<? extends Object> arg0,
 							Object arg1, Object arg2) {
 
-						atualizarList();
+						atualizarList(pEdit);
 
 
 					}
@@ -191,9 +200,16 @@ public class JanelaDeQuestionMark extends Stage {
 				Conexao.update(qParaEditar);
 				MessageBox.ShowInfo("Sucesso", "Disponibilidade Editada com sucesso");
 				btnEditar.setDisable(true);
-				atualizarList();
+				atualizarList(pEdit);
 			}catch (Exception e) {
 				// TODO: handle exception
+			}
+		});
+		this.btnRemoverDisp.setOnAction(value -> {
+			if(lvDispsDiaSemana.getSelectionModel().getSelectedIndex() > -1){
+				Conexao.delete(lvDispsDiaSemana.getSelectionModel().getSelectedItem());
+				MessageBox.ShowInfo("Removido", "Removido com Sucesso");
+				lvDispsDiaSemana.getItems().remove(lvDispsDiaSemana.getSelectionModel().getSelectedIndex());
 			}
 		});
 
@@ -202,10 +218,8 @@ public class JanelaDeQuestionMark extends Stage {
 
 		VBox vbControlesLabels1 = new VBox(5);
 
-		vbControlesLabels1.getChildren().addAll(this.lblSelecioneCurso,
-				this.cbSelecionarCurso, this.lblSelecioneProfessor,
-				this.cbSelecionarProfessor, this.lblPontuacaoProfessor,
-				this.lblValorPontuacao, this.lblSelecioneDiaSemana,
+		vbControlesLabels1.getChildren().addAll(this.nomeDoProfessor,
+			    this.lblSelecioneDiaSemana,
 				this.cbDiaSemana, this.lvDispsDiaSemana);
 
 		VBox vbControlesLabels2 = new VBox(5);
@@ -216,7 +230,7 @@ public class JanelaDeQuestionMark extends Stage {
 				this.btnRemoverDisp);
 
 		vbControlesLabels2.getChildren().addAll(this.lblDispDe, this.tpDispDe,
-				this.lblDispAte, this.tpDispAte, hbBotoes, this.btnSalvar);
+				this.lblDispAte, this.tpDispAte, hbBotoes, this.btnEditar);
 
 		this.apPainelControles1.getChildren().add(vbControlesLabels1);
 		this.apPainelControles2.getChildren().add(vbControlesLabels2);
@@ -232,16 +246,13 @@ public class JanelaDeQuestionMark extends Stage {
 
 	}
 
-	public void atualizarList(){
+	public void atualizarList(Professor pEdit){
 		if (Conexao.select("Questionmarks").isEmpty()) {
 		} else {
 			listQuestionmarksDoProfessor.clear();
 			List<Questionmarks> lsq = Conexao.selectWhere("Questionmarks",
 					"id_professor = "
-							+ cbSelecionarProfessor
-									.getSelectionModel()
-									.getSelectedItem()
-									.getId_professor());
+							+ pEdit.getId_professor());
 
 			for (Questionmarks qsmrk : lsq){
 				listQuestionmarksDoProfessor.add(qsmrk);

@@ -67,11 +67,12 @@ public class Conexao {
 
 		}
 
-		public static void delete(Object objeto) {
+		public static void delete(Object objet) {
 
 			EntityManager gerenciador = Conexao.gerarGerenciador();
 			gerenciador.getTransaction().begin();
-			gerenciador.remove(objeto);
+			Object objeto = gerenciador.merge(objet);
+			gerenciador.remove(objet);
 			gerenciador.getTransaction().commit();
 			gerenciador.close();
 

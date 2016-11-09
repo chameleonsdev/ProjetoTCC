@@ -4,9 +4,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import controles.CelulaComboBox;
 import controles.TabelaHorario;
 import entidades.Curso;
 import entidades.Horario;
+import entidades.Professor;
+import entidades.Questionmarks;
 import Banco.Conexao;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,12 +25,14 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 @SuppressWarnings("rawtypes") //----------------> SAI WARNING!!!; <----------------//
 public class JanelaDeGerarATabelinhaLa extends Stage{
@@ -44,15 +49,15 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 	private MenuBar menuBar;
 
 	private VBox root;
-	
+
 	private TabPane teste;
 
 	//private ComboBox<Curso> cmbCurso;
-	
+
 	private ComboBox<String> cmbModulo;
 
 	private ObservableList<Curso> listaDeCursos;
-	
+
 	private ObservableList<String> listaDeModulos;
 
 	//--------------------------------------------------------------------------------------//
@@ -72,20 +77,20 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		this.menuBar = new MenuBar();
 
 		this.root = new VBox();
-		
+
 		this.teste = new TabPane();
 
 		this.cmbModulo = new ComboBox<String>();
 
 		this.listaDeCursos = FXCollections.observableArrayList();
-		
+
 		this.listaDeModulos = FXCollections.observableArrayList("Primeiro", "Segundo", "Terceiro");
 
 		//-------------------------------------------------------------//
-		
-		
-		
-		
+
+
+
+
 		//----------------> Criando SubMenus; <----------------//
 		MenuItem sair = new MenuItem("Sair");
 		MenuItem novohorario = new MenuItem("Novo Horario");
@@ -150,7 +155,7 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		editarProfessor.setOnAction(value -> {
 			new JanelaEditarProfessores();
 		});
-		
+
 		atribuirhorarios.setOnAction(value -> {
 			new JanelaDeQuestionMark();
 		});
@@ -163,12 +168,14 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		//----------------> UM POUCO DE DESIGN; <----------------//
 
 		//----------------> Define espaçamento dos elementos no AnchorPane; <----------------//
-		
+
 		//----------------> Deixa a barra de menu da largura da janela; <----------------//
 		menuBar.prefWidthProperty().bind(this.widthProperty());
 
+
+
 		//-------------------------------------------------------------------------------------------------//
-		
+
 		cmbModulo.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 	        public void changed(ObservableValue ov, String t, String t1) {
@@ -182,16 +189,20 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 							Tab tab = new Tab();
 							tab.setText(curso.getNome_curso());
 							tab.setClosable(false);
-							TabelaHorario tableasas = new TabelaHorario();
 							ObservableList<Horario> hList = FXCollections.observableArrayList();
 							for (Horario h : curso.getHorarios()) {
 								hList.add(h);
 							}
+							List<Professor> lista = Conexao.selectQuery("from Questionmarks where diasemana = 'Segunda-Feira'");
+							TabelaHorario tableasas = new TabelaHorario();
 							tableasas.setItems(hList);
 							//tableasas.
+							tableasas.setEditable( true );
+
+
 							tab.setContent(tableasas);
 							teste.getTabs().add(tab);
-						}		
+						}
 					}
 				}else if(t1.equals("Segundo")){
 					teste.getTabs().clear();
@@ -200,15 +211,16 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 							Tab tab = new Tab();
 							tab.setText(curso.getNome_curso());
 							tab.setClosable(false);
-							TabelaHorario tableasas = new TabelaHorario();
 							ObservableList<Horario> hList = FXCollections.observableArrayList();
 							for (Horario h : curso.getHorarios()) {
 								hList.add(h);
 							}
+							List<Professor> lista = Conexao.selectQuery("from Questionmarks where diasemana = 'Segunda-Feira'");
+							TabelaHorario tableasas = new TabelaHorario();
 							tableasas.setItems(hList);
 							tab.setContent(tableasas);
 							teste.getTabs().add(tab);
-						}		
+						}
 					}
 				}else if(t1.equals("Terceiro")){
 					teste.getTabs().clear();
@@ -217,25 +229,26 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 							Tab tab = new Tab();
 							tab.setText(curso.getNome_curso());
 							tab.setClosable(false);
-							TabelaHorario tableasas = new TabelaHorario();
 							ObservableList<Horario> hList = FXCollections.observableArrayList();
 							for (Horario h : curso.getHorarios()) {
 								hList.add(h);
 							}
+							List<Professor> lista = Conexao.selectQuery("from Questionmarks where diasemana = 'Segunda-Feira'");
+							TabelaHorario tableasas = new TabelaHorario();
 							tableasas.setItems(hList);
 							tab.setContent(tableasas);
 							teste.getTabs().add(tab);
 							//teste.getTabs().get(teste.getTabs().size() - 1).getContent().;
-						}		
+						}
 					}
 				}
 			}
 		});
-		
+
 		//-------------------------------------------------------------------------------------------------//
-		
+
 		System.out.println(this.getHeight());
-		
+
 		//----------------> DEFINIÇÕES DA JANELA; <----------------//
 		this.setMinWidth(600);
 		this.setMinHeight(650);
@@ -249,6 +262,8 @@ public class JanelaDeGerarATabelinhaLa extends Stage{
 		this.setScene(scene);
 		//----------------> Mostrando a Janela; <----------------//
 		this.show();
+
+		this.setTitle("Principal");
 
 		//-------------------------------------------------------//
 		//---------------->        FIM;        <----------------//

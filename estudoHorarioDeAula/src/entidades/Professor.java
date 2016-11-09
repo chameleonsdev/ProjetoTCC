@@ -152,7 +152,7 @@ public class Professor {
 
 	//Get e Set da Lista de Questionmarks;
 
-	@OneToMany(mappedBy = "professor")
+	@OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Questionmarks> getQuestionmarks() {
 		return Questionmarks;
 	}

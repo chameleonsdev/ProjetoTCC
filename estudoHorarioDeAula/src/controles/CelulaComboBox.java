@@ -1,71 +1,105 @@
 package controles;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
+
+import java.time.LocalTime;
+import java.util.List;
+
+import Banco.Conexao;
+import entidades.Curso;
+import entidades.Horario;
+import entidades.Materia;
 import entidades.Professor;
+import entidades.Questionmarks;
 import janelas.JanelaEditarMateriasCursos;
 import janelas.JanelaEditarProfessores;
 
-public class CelulaComboBox implements
-		Callback<TableColumn<Professor, String>, TableCell<Professor, String>> {
-
-	@Override
-	public TableCell<Professor, String> call(TableColumn<Professor, String> arg0) {
-		return new celulaButton();
-	}
-
-	class celulaButton extends TableCell<Professor, String> {
-
-		private ComboBox<Professor> cmbCelula;
+public class CelulaComboBox extends TableCell<Horario, String>{
+	 private ComboBox<String> comboBox;
 
 
-		public celulaButton() {
-
-			this.criarBotao();
-			this.setText(this.recuperarTexto());
-			this.setGraphic(null);
-			this.setAlignment(Pos.CENTER);
-
-			cmbCelula.setOnMouseClicked(value -> {
-				if(this.getTableColumn().getText().equals("Cursos e Materias")){
-					JanelaEditarMateriasCursos janelaEProf = null;
-					if(janelaEProf == null){
-						janelaEProf = new JanelaEditarMateriasCursos((Professor) this.getTableRow().getItem());
-					}
-					janelaEProf.show();
-				}
-			});
-
-		}
+     public CelulaComboBox()
+     {
+         comboBox = new ComboBox<>();
+     }
 
 
+     @Override
+     public void startEdit()
+     {
+         if ( !isEmpty() )
+         {
+             super.startEdit();
+             ObservableList<String> listnew = FXCollections.observableArrayList();
+             List<Questionmarks> lsitassa = Conexao.selectQuery("from Questionmarks where diasemana = '"+ getTableView().getColumns().get(1).getText()+"-Feira' and hora_entrada <= '"+ getTableView().getItems().get( getIndex() ).getHora_disp() + "' and hora_saida >= '" + getTableView().getItems().get(getIndex()+1).getHora_disp() + "'");
+             for (Questionmarks q : lsitassa){
+            	 for(Materia m : q.getProfessor().getMaterias()){
+            		 listnew.add(q.getProfessor().getNome_professor() + "-" + m.getNome_materia());
+            	 }
+             }
 
-		@Override
-		protected void updateItem(String item, boolean empty) {
-			super.updateItem(item, empty);
-			if (empty) {
-				setText(null);
-				setGraphic(null);
-			} else {
-				setGraphic(this.cmbCelula);
-				setText(null);
-			}
-		}
+             comboBox.setItems(listnew);
+             comboBox.getSelectionModel().select( 1 );
 
-		private String recuperarTexto() {
-			return getItem() == null ? "" : getItem();
-		}
+             comboBox.focusedProperty().addListener( new ChangeListener<Boolean>()
+             {
+                 @Override
+                 public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
+                 {
+                     if ( !newValue )
+                     {
+                         commitEdit(comboBox.getSelectionModel().getSelectedItem());
+                     }
+                 }
+             } );
 
-		private void criarBotao() {
-			this.cmbCelula = new ComboBox<Professor>();
-			this.cmbCelula.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-			//this.cboxAWTEhMelhor.setOnMouseClicked(this);
-		}
+             setText( null );
+             setGraphic( comboBox );
+         }
+     }
 
-		}
 
-}
+     @Override
+     public void cancelEdit()
+     {
+         super.cancelEdit();
+
+         setText( ( String ) getItem() );
+         setGraphic( null );
+     }
+
+
+     @Override
+     public void updateItem( String item, boolean empty )
+     {
+         super.updateItem( item, empty );
+
+         if ( empty )
+         {
+             setText( null );
+             setGraphic( null );
+         }
+         else
+         {
+             if ( isEditing() )
+             {
+                 setText( null );
+                 setGraphic( comboBox );
+             }
+             else
+             {
+                 setText( getItem() );
+                 setGraphic( null );
+             }
+         }
+     }
+ }

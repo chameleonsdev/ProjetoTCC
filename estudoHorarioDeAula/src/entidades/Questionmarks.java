@@ -29,7 +29,7 @@ public class Questionmarks {
 	private LocalTime hora_saida;
 
 	private Professor professor;
-	
+
 	private StringProperty diasemana;
 
 	//List<Professor> professores;
@@ -73,7 +73,7 @@ public class Questionmarks {
 		this.hora_saida = hora_saida;
 	}
 
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "id_professor")
 	public Professor getProfessor() {
 		return professor;
@@ -100,7 +100,7 @@ public class Questionmarks {
 	//Retornar string no objeto (TESTE)
 			@Override
 		    public String toString() {
-		        return String.valueOf(this.getId_questionmark());
+		        return ("Das " + this.getHora_entrada() + " as " + this.getHora_saida());
 		    }
 
 
